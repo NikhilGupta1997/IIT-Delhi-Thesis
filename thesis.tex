@@ -8,7 +8,7 @@
 \program{My Fancy Degree}
 
 % \usepackage{times}
- \usepackage{t1enc}
+\usepackage{t1enc}
 
 \usepackage{graphicx}
 \usepackage{hyperref} % hyperlinks for references.
@@ -17,7 +17,16 @@
 \usepackage[utf8]{inputenc}
 \usepackage{natbib}
 \usepackage{fancyhdr}
- \linespread{1.2}
+
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{comment}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{subcaption}
+
+\linespread{1.2}
 
 \pagestyle{fancy}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
@@ -37,6 +46,7 @@
 \addto\captionsenglish{\renewcommand{\bibname}{\centerline{REFERENCES}}}
 
 \newcommand\sys{{\sc BoSsNet}}
+\newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
 \begin{document}
 
@@ -45,7 +55,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page
 
-\title{Knowledge Base Adaptation for Task Oriented Dialog}
+\title{Knowledge Base Adaptation for \\ Task Oriented Dialog Systems}
 
 \author{Nikhil Gupta}
 \advisor{Prof. Mausam}
@@ -55,6 +65,7 @@
 
 %\nocite{*}
 \maketitle
+\input{title.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Certificate

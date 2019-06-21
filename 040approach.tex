@@ -1,0 +1,85 @@
+\section{The \sys\ Architecture}
+% Quick Intro
+The proposed Bag-of-Sequences Memory Network has an encoder-decoder architecture that takes as input (1) dialog history, which includes a sequence of previous user utterances $\{c_1^u, \ldots, c_{n}^u\}$ and system responses $\{c_1^s, \ldots, c_{n-1}^s\}$, and (2) KB tuples $\{kb_1, \ldots, kb_{N}\}$. The network then generates the next system response $c_n^s=\langle y_1  y_2  \ldots  y_T \rangle$ word-by-word. The simplified architecture of \sys\ is shown in Figure \ref{fig:system}.
+%The network maintains the dialog history and KB tuples in the {\em Bag-Of-Sequences memory}.
+% Notations Used
+
+\begin{figure}[t]
+\centering
+\includegraphics[scale=0.45]{assets/paper_arch.pdf}
+\caption{The dialog history and KB tuples stored in the memory have memory cell representations and token representations. The encoder understands the last user utterance using only the memory cell representations. The decoder generates the next response using both representations.}
+\label{fig:system}
+\end{figure}
+
+\begin{figure*}[ht]
+\centering
+\includegraphics[scale=0.4]{assets/paper_arch.png}
+\caption{The encoder-decoder architecture of HyP-MN with hierarchical memory}
+\label{fig:system}
+\end{figure*}
+
+% Summary of what we are about to describe
+In this section, we first describe the {\sc BoSs} memory which contains the dialog history and KB tuples, followed by how the memory is consumed by the encoder and the decoder. We finally define the loss function, which, along with dropout, enables disentangled learning of language and knowledge.
+
+\subsection{Bag-of-Sequences Memory} 
+\label{sec:hmemory}
+The memory $M$ contains the dialog history $\{c_1^u, c_1^s, \ldots, c_{n-1}^u, c_{n-1}^s\}$ and the KB tuples $\{kb_1, \ldots, kb_{N}\}$.  Each utterance in the dialog history and each KB tuple is placed in a memory cell. As utterances and tuples are inherently a sequence, we represent each  memory cell  $m_i$ as an ordered sequence of tokens $\langle w^1_i w^2_i \ldots w^{|m_i|}_i\rangle$. For an utterance, the word tokens are followed by a temporal indicator and a speaker indicator \{\$u, \$s\}. For example, \{\texttt{good, morning, \#1, \$s}\}\ indicates this was the first utterance by the system. For a KB tuple, the tokens are sequenced as \{\textit{subject, predicate, object}\} followed by temporal indicator and a kb indicator (\texttt{\$db}).
+
+Token representation is generated using a bidirectional GRU. Let the outputs of the forward and backward GRUs for the token $w^j_i$ be denoted as $\overrightarrow{h^j_{i}}$ and $\overleftarrow{h^j_{i}}$ respectively. Then the token representation $\phi(w^j_i)$ is given by Eq. \ref{eqn:1}. Memory cell representation $\psi(m_i)$ is computed by concatenating the forward GRU output of its last token and the backward GRU output of its first token as in Eq. \ref{eqn:2}. 
+\begin{eqnarray}
+\phi(w^j_i)=[\overrightarrow{h^j_{i}};\overleftarrow{h_{i}^j}] \label{eqn:1} \\
+\psi(m_i)=[\overrightarrow{h_{i}^{|m_i|}};\overleftarrow{h_{i}^1}] \label{eqn:2}
+\end{eqnarray}
+
+%\textcolor{blue}{The encoder uses only the memory cell representations to summarize the dialog history and the KB, while the decoder peaks at both the memory cell representation and the token representations during each decode step.}\todo{[N: This is unclear]}
+
+\subsection{The \sys\ Encoder}
+\label{ssec:encoder}
+
+The encoder used in \sys\ is similar to the multi-hop attention encoder with layer-wise weights proposed by \citeauthor{sukhbaatar2015end} (\citeyear{sukhbaatar2015end}). The encoder in \citeauthor{sukhbaatar2015end} (\citeyear{sukhbaatar2015end}) uses two different embedding matrices, whereas we use just one to reduce the number of parameters. The encoder considers the last user utterance as the query $q=\psi(c_n^u)$ and computes the reduced representation $q_r$ using the memory $M$ as follows:
+\begin{eqnarray}
+p_i &=& \text{softmax}(q^T \psi(m_i)) \\
+o &=& W_r \sum\nolimits_i p_i \psi(m_i) \\
+q_r &=& o + W_o  q
+\end{eqnarray}
+
+where $W_r, W_o \in \mathbb{R}^{d \times d}$ are learnable parameters. The hop step can be re-iterated, by assigning the output of the previous hop as the new input query, i.e., setting $q=q_r$. The output of the encoder after $K$ hops, $q_r^k$, is assigned as the initial state of the \sys\ decoder.
+
+\subsection{The \sys\ Decoder}
+\label{ssec:decoder}
+
+\sys\ models a copy-augmented sequence decoder, which generates the response one word at a time. At any decode time step $t$, the decoder can either \emph{generate} a word from the decode vocabulary or \emph{copy} a word from the memory. Consequently, the decoder computes: (1) generate distribution $P_g(y_t)$ over the decode vocabulary, and (2) copy distribution $P_c(y_t)$ over words in the memory. 
+
+The generate distribution is computed using a standard sequence decoder \cite{sutskever2014sequence} by attending \cite{luong2015effective} over the memory cell representations $\psi$. The copy distribution is generated by using a \textit{two-level attention}. Given the decoder state $s_t$, it first computes attention $\alpha_t$ over the memory cells. Then it computes attention over the tokens in each memory cell $m_i$. Finally it multiplies both these attentions to compute $P_c(y_t)$ as follows: 
+\begin{gather}
+\alpha_i^t = \text{softmax}(s_t \psi(m_i)) \\
+e_{ij}^t = s_t \phi(w_i^j) \\
+\beta^{t}_{ij} = \alpha^t_i * \frac{\exp({e_{ij}^t})}{\sum\nolimits_{k}\exp({e_{ik}^t})} \\
+%\beta^{t}_{ij} = \alpha^t_i * \sigma(e_{ij}^{t}) \\
+P_c(y_t=w)=\sum_{ij:w_i^j=w} \beta_{ij}^{t}
+\end{gather}
+
+%\textcolor{blue}{where $W^w_l, W^u_l \in \mathbb{R}^{d \times d}$ are learnable parameters.}
+%\todo{[N: I think we dont use the weight matricies for attention due to extra parameters and low performance.]}
+
+The copy and generate distributions are combined using a soft gate $g_s^t \in [0,1]$ as in \citeauthor{see2017get} (\citeyear{see2017get}). $g_s^t$ is a function of the decoder state at time $t$ and the word decoded in the previous time step.
+
+\subsection{Loss}
+The decoder is trained using cross-entropy loss. The loss per response is defined as:
+\begin{equation}
+\mathcal{L}_{ce} = - \sum_{t=1}^{T} \textup{log} \Big( g_s^{t}P_g(y_t) + (1-g_s^{t})P_c(y_t) \Big) 
+%\\ + \gamma \sum_{t=1}^{T}H(p^{(t)}_{gen}, p^{(t)}_{ref-gen}) 
+\end{equation}
+where $T$ is the number of words in the sequence to be generated and $y_t$ is the word to be generated at time step $t$. The decision to generate or copy is learnt implicitly by the network. However, to attain perfect disentanglement, the KB words should be copied, while the language should be generated. In other words, any word in the response that is present in the {\sc BoSs} KB memory should have a low $g_s$. To obtain this behavior, we define a disentangle label $D_{l}$ for each word in the response. This label is set to $1$ if the word is present in the {\sc BoSs} KB memory and $0$ otherwise.
+We define a disentangle loss as follows:
+\begin{equation}
+\mathcal{L}_{d} = - \sum_{t=1}^{T}  g_s^{t}\textup{log}D^{t}_{l} + (1-g_s^{t})\textup{log}(1-D^{t}_{l})
+\end{equation}
+
+We randomly drop some words with disentangle label set to $1$. This \textit{Disentangle Label Dropout (DLD)} works in tandem with the disentangle loss and {\sc BoSs} memory -- it encourages the model to copy KB words whenever possible, based on their surrounding words.  The overall loss is given as:
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{ce} + \gamma \mathcal{L}_{d}
+\label{eqn:loss}
+\end{equation}
+
+The relative weight of $\mathcal{L}_{d}$ in the overall loss is controlled using a hyper-parameter ($\gamma$). The dropout rate is also a hyper-parameter.

@@ -6,3 +6,67 @@ Alternatively, generative approaches are used where the response is {\em generat
 
 For encoding, some approaches represent the dialog history as a sequence \cite{eric2017copy,ptr-unk}. Unfortunately, using a single long sequence for encoding also enforces an order over the set of KB tuples making it harder to perform inferencing over them. Other approaches represent the dialog context as a bag. Original Memory Networks \cite{BordesW16} and its extensions encode each memory element (utterance) as an average of all constituent words -- this cannot point to individual words, and hence cannot be used with a copy mechanism. Mem2Seq encodes each word individually in a flat memory. Unfortunately, this loses the contextual information around a word, which is needed to decipher an unseen word. In contrast, \sys\ uses a bag of sequences encoding, where KB tuples are a set for easier inference, and also each utterance is a sequence for effectively learning when to copy.  
 
+\section{Related Work}
+
+\sys\ architecture has a {\em multi-hop encoder}, and a {\em pointer network} decoder with a {\em hierarchical attention} over the memory. We briefly survey these three strands of related research.
+
+\vspace{0.5ex}
+\noindent
+\textbf{Multi-hop Networks} reason over a sequence of sentences fed as input. A hop refers to reading the sentences and generating a encoded-vector. Multi-hop refers to making multiple updates to the encoded-vector by iteratively reading the input. End to end memory network (MN) \cite{sukhbaatar2015end} represents the input as a set of sentences. Here the encoded-vector is updated by adding iterative reads.~Query reduction network \cite{seo2016query} reads the sentences sequentially using an RNN like unit called the QRN unit. Dynamic memory network \cite{kumar2016ask} also reads the sentences sequentially, and also updates the encoded-vector using a recurrent cell. Gated memory network \cite{liu2017gated} uses a gating mechanism to update the encoded-vector. %Our network also falls under this family of networks.
+
+MN \cite{BordesW16}, gated MN and QRN have been used to learn task-oriented dialogues. \sys\ has two key differences from such architectures. First, existing models select a response from a predefined list of candidates (retrieval model), whereas \sys\ has a decoder that generates the response one word at a time. Second, the memory in \sys\ is hierarchical, i.e., each memory element is a sequence of words vectors rather than just a single utterance vector. This enables the generator to copy any word from the memory during generation.
+
+%The two main differences such approaches and our approach are: (1) these model select a response from a predefined list of candidates where as our approach generates responses. (2) The memory is hierarchical (i.e.,) each memory element is a sequence of words rather than just a vector. This enables the generator to copy any word from the memory during generation.
+
+\vspace{0.5ex}
+\noindent\textbf{Pointer Networks}  are sequence to sequence (Seq2Seq) models, where each token in the output sequence corresponds to a token at a certain position in the input sequence \cite{vinyals2015pointer}. By enabling pointing in Seq2Seq models \cite{cho2014learning,sutskever2014sequence}, the effective decode vocabulary becomes the union of the fixed decode vocabulary and the vocabulary of the input sequence. Two main methods \cite{gu2016incorporating,eric2017copy} exist for incorporating pointing in standard Seq2Seq models -- hard decision \cite{nallapati2016abstractive,gu2016incorporating,eric2017copy} and soft switch \cite{see2017get}. The former makes a hard choice between using the pointer distribution and the decode vocabulary distribution. It usually requires the hard decision to be labeled. The latter approach learns a soft interpolation between the two distributions without explicit labels. \sys\ employs a soft switch in its decoder.
+
+%\cite{see2017get} combined the pointer distribution and the decode vocabulary distribution using a soft switch, where as \cite{nallapati2016abstractive} used either the pointer distribution or the decode vocabulary distribution based on a hard decision. The former learns the soft switch latently without explicit labels, while the latter requires the hard decision to be labeled. Since, we wish the system to automatically learn when to generate and when to point, we use an approach similar to one proposed in \cite{see2017get}.
+
+Eric and Manning
+\cite{eric2017copy} use a copy augmented Seq2seq model for learning task oriented dialogues. This approach uses a hard decision to pick between the generate and pointer distributions. This model is explicitly trained to only point to words that are from the KB and generate the rest. This is the closest work to our approach, but has a flat memory and doesn't incorporate multi-hop reasoning.
+
+\vspace{0.5ex}
+\noindent\textbf{Hierarchical Attention} was first introduced for document classification \cite{yang2016hierarchical}. Here, each document is represented as a set of sentences and each sentence as a set of words. For each sentence, an attention distribution is computed over words to identify informative words and compute a sentence representation. A similar approach identifies informative sentences to compute a document representation. Hierarchical attention has also been used for abstractive text summarization \cite{nallapati2016abstractive}.
+\sys\ similarly computes two attention distributions over different levels of the input. A word-level distribution over the words in each utterance and an utterance-level distribution over all the input utterances. This a function of these two distributions is used when copying a word in the decode process.
+
+\section{Background}
+In this section, we briefly describe the preliminaries over which the proposed Hierarchical Pointer Memory Network (\sys) is built upon. This includes (1) the multi-hop encoder in MN and (2) a standard sequence decoder with attention \cite{bahdanau2014neural}.
+
+\subsection{Multi-Hop Encoder in MN}
+\label{ssec:mhencoder}
+The multi-hop encoder in described in end-to-end memory network \cite{sukhbaatar2015end} takes as input a query $q \in \mathbb{R}^{d}$ and a memory $M = \{ m_i; m_i \in \mathbb{R}^{d}\}$ and generates a reduced query $q_r \in \mathbb{R}^{d}$. Here $d$ is the embedding dimension. Augmenting the query by attending it over the memory elements, to capture relevant information necessary to generate the response, is referred to as a \textit{hop}. A single hop reduced query is computed as follows:
+\begin{eqnarray}
+p_i &=& \text{softmax}(q^T m_i) \\
+o &=& W_r \sum\nolimits_i p_i m_i \\
+q_r &=& o + q
+\end{eqnarray}
+where $W_r \in \mathbb{R}^{d \times d}$. The hop step can be re-iterated, by assigning the output of the previous hop as the new input query (i.e.,) $q=q_r$. If the encoder has $K$ hops, then the final output is represented as $q^k_r$. The multiple hops enable inference over multiple memory elements.
+
+\subsection{Sequence Decoder with Attention}
+\label{ssec:rnndecoder}
+The sequence decoder predicts the token $y_t$ in the output sequence $\langle y_1  y_2  \ldots  y_T \rangle$, given the decoder state at time $t$, $s_t$, and a set of input contexts $Z=\{z_i ; z_i \in \mathbb{R}^{d}\}$. For simplicity, we denote this conditional distribution of generating the next word as just $P_g(y_t)$. To compute $P_g(y_t)$, first an attention distribution $\alpha^t$ is computed over the input contexts $z_i$ using Loung attention \cite{luong2015effective}. 
+\begin{gather}
+u_i^t = s_t W_l z_i \\
+\alpha_i^t = \frac{exp(u_i^t)}{\sum\nolimits_{k}exp(z_k^t)} \label{eq:memattn}
+\end{gather}
+where $W_l \in \mathbb{R}^{d \times d}$. Then, a context vector $z^*_t$ is generated by performing a weighed sum of the input contexts $z_i$ using the attention distribution $\alpha^t_i$.
+\begin{comment}
+\begin{gather}
+z^*_t = \sum\nolimits_i \alpha^t_i z_i 
+\end{gather}
+\end{comment}
+The context vector concatenated with the decoder state $s_t$ is then used to compute the \textit{generate distribution} over the decode vocabulary $\mathcal{V}$ at time $t$ as follows:
+\begin{gather}
+P_{g}(y_t)= \text{softmax}( W_d [s_t;z^*_t] + b )
+\end{gather}
+where $W_d \in \mathbb{R}^{|\mathcal{V}| \times 2d}$ and $b \in \mathbb{R}^{|\mathcal{V}|}$ are parameters to be learnt.  $[;]$ indicates vector concatenation along the row.
+
+During training, the objective is to minimize the average negative log-likelihood for all the words in the response.
+\begin{comment}
+\begin{gather}
+\mathcal{L}=-\frac{1}{T}\sum\nolimits_{t=1}^{T}log  P_{g}(y_t)
+\label{eq:loss}
+\end{gather}
+\end{comment}
+The total loss is computed by adding the loss of all the responses in the training data.

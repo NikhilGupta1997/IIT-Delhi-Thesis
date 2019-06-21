@@ -1,0 +1,37 @@
+\begin{table*}
+\centering
+\small
+\begin{tabular}{c|l}
+\toprule
+\multicolumn{2}{c}{\textbf{KB (restaurant|cuisine|location|rating)}} \\
+\multicolumn{2}{c}{\textit{resto\_madrid\_moderate\_spanish\_6stars}|\textit{vietnamese}|\textit{tokyo}|\textit{8}}\\
+\multicolumn{2}{c}{\textit{resto\_hanoi\_cheap\_thai\_3stars}|\textit{vietnamese}|\textit{tokyo}|\textit{7}}\\
+\multicolumn{2}{c}{\textit{resto\_bangkok\_moderate\_cantonese\_2stars}|\textit{vietnamese}|\textit{tokyo}|\textit{6}}\\
+\multicolumn{2}{c}{\textit{resto\_rome\_cheap\_india\_4stars}|\textit{vietnamese}|\textit{tokyo}|\textit{5}}\\
+\midrule
+\midrule
+\textbf{usr-1} & can you book a table in tokyo with vietnamese food in a affordable price range ? \\
+\textbf{sys-1} & what do you think of this option : resto\_madrid\_moderate\_spanish\_6stars ? \\
+\textbf{usr-2} & no this does not work for me . \\
+\textbf{sys-1} & what do you think of this option : resto\_hanoi\_cheap\_thai\_3stars ? \\
+\textbf{usr-2} & do you have something else ? \\
+\midrule
+\textbf{Gold} & what do you think of this option : resto\_bangkok\_moderate\_cantonese\_2stars
+ \\
+\midrule
+\midrule
+\specialcell[t]{\textbf{Seq2Seq+Copy}} & what do you think of this option : what ?
+ \\
+\midrule
+\textbf{Seq2Seq} & what do you think of this option : resto\_london\_moderate\_british\_2stars ? \\
+
+\midrule
+\textbf{Mem2Seq} & what do you think of this option : resto\_rome\_cheap\_indian\_4stars ?
+ \\
+\midrule
+\textbf{\sys\ } & what do you think of this option : resto\_bangkok\_moderate\_cantonese\_2stars ? \\
+\bottomrule
+\end{tabular}
+\caption{Task 5 100\% OOV. The OOV entities present in the dialog are \{\textit{vietnamese}, \textit{tokyo}, \textit{affordable}, [all restaurant names]\}}
+\label{tab:task5}
+\end{table*}

@@ -1,0 +1,35 @@
+\begin{table*}
+\centering
+\small
+\begin{tabular}{c|l}
+
+\toprule
+% \multicolumn{2}{c}{\textbf{KB (restaurant|cuisine|address|phone|postcode)}} \\
+% \multicolumn{2}{c}{\textit{prezzo}|\textit{ethiopian}|\textit{22\_seetharam\_nagar}|\textit{01799\_521260}|\textit{cb30ad}}\\
+% \midrule
+\midrule
+\textbf{usr-1} &good morning \\
+\textbf{sys-1} & hello what can i help you with today \\
+\textbf{usr-2} & can you book a table with \textit{korean} cuisine for \textit{five} in \textit{beijing} \\
+\textbf{sys-2} & i ' m on it . which price range are looking for ? \\
+\textbf{usr-3} & i am looking for a \textit{overpriced} restaurant \\
+\midrule
+\textbf{Gold} & api\_call \textit{korean beijing five overpriced}
+ \\
+\midrule
+\midrule
+\specialcell[t]{\textbf{Seq2Seq+Copy}} & api\_call \textit{korean beijing five overpriced}
+ \\
+\midrule
+\textbf{Seq2Seq} & api\_call \textit{french london four moderate} \\
+
+\midrule
+\textbf{Mem2Seq} & api\_call \textit{overpriced korean korean overpriced}
+ \\
+\midrule
+\textbf{\sys\ } & api\_call \textit{korean beijing five overpriced} \\
+\bottomrule
+\end{tabular}
+\caption{Example from bAbI dialog Task 1 with 100\% OOV.}
+\label{tab:t1_100}
+\end{table*}

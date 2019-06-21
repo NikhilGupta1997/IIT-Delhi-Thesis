@@ -135,7 +135,7 @@
   \if@Synopsis
     {\large \em SYNOPSIS OF \par}
   \fi
-    {\Large \bf \expandafter{\@title} \par}%
+    {\LARGE \bf \expandafter{\@title} \par}%
     \vskip 10ex%
     {\normalsize
       \if@PhD
@@ -144,16 +144,16 @@
          \if@Synopsis
             {\normalsize \em to be submitted by \par}
          \else
-            {\normalsize \em submitted by \par}
+            {\large \em submitted by \par}
          \fi
          {\bf \large{\@author}\par\par}
          {\bf {\@entrynumber}\par\par}
          \vskip 5ex%
-         {\normalsize \em under the guidance of \par}
+         {\large \em under the guidance of \par}
          \vskip 5ex%
          {\bf \large{\@advisor}\par\par}
          \vskip 5ex%}
-         {\normalsize \em for the award of the degree }\par
+         {\large \em for the award of the degree }\par
          \vskip 5ex%
          {\em of} \par
          \vskip 5ex%
@@ -175,22 +175,22 @@
             {\bf \large {Master Of Science}} \par
             (by Research) \par
          \else
-           {\em Thesis submitted by \par}
+           {\em \large Thesis submitted by \par}
            \vskip 5ex%
-           {\bf \large{\@author}\par\par}
+           {\bf \Large{\@author}\par\par}
            {\bf {\@entrynumber}\par\par}
            \vskip 5ex%
-           {\normalsize \em under the guidance of\par}
-           {\bf \large{\@advisor}\par}
+           {\large \em under the guidance of\par}
+           {\bf \Large{\@advisor}\par}
            \vskip 5ex%}
-           {\normalsize \em in partial fulfilment of the requirements\par
+           {\large \em in partial fulfilment of the requirements\par
              for the award of the degree of \par}
            \vskip 5ex%
            \if@MTech
              {\bf Master of Technology}
            \fi
            \if@Dual
-             {\bf Bachelor and Master of Technology}
+             {\bf \Large Bachelor and Master of Technology}
            \fi
            \if@BTech
               {\bf Bachelor of Technology}
@@ -199,17 +199,19 @@
               {\bf {\@program}}
            \fi
          \fi
+         \vskip 8ex%
+         {\bf \large \@date}\par
+         \vskip 5ex%
       \fi
     }
   \end{center}%
-
-  \centerline{\includegraphics[height=1.5in,width=1.5in, keepaspectratio]{iitd_logo.png}}
-  \vspace*{-0.15in}
+  \vspace*{0.15in}
+  \centerline{\includegraphics[height=1.5in,width=1.5in, keepaspectratio]{assets/figures/Logo-IITD.jpg}}
+  \vspace*{0.15in}
   \begin{center}
     {\bf \large Department Of \@department\par}
     {\bf INDIAN INSTITUTE OF TECHNOLOGY DELHI}
     \vglue 0.50em
-    {\bf \large \@date}\par
   \end{center}
   \parskip 8pt
 }

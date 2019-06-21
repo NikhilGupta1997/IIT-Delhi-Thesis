@@ -1,0 +1,34 @@
+\begin{table*}
+\centering
+\small
+\begin{tabular}{c||p{13cm}}
+\toprule
+\multicolumn{2}{c}{\textbf{KB (restaurant|cuisine|address|phone|postcode)}} \\
+\multicolumn{2}{c}{\textit{prezzo}|\textit{ethiopian}|\textit{22\_atlantis\_road}|\textit{01799\_521260}|\textit{cb30ad}}\\
+\midrule
+\midrule
+\textbf{usr-1} &i want a \textit{moderately\_expensive ethiopian} restaurant in the \textit{south} side of town \\
+\textbf{sys-1} & i ' m sorry . i can not find a \textit{moderately\_expensive ethiopian} restaurant in the \textit{south} side of town \\
+\textbf{usr-2} & i would like to find a \textit{moderately} priced restaurant in the \textit{west} part of town \\
+\textbf{sys-2} & \textit{prezzo} is a moderately priced \textit{ethiopian} restaurant in the \textit{west} part of town . there is also \textit{indian} and \textit{british} food available in that area and price range . would you like more info ? \\
+\textbf{usr-3} & yes can i get thier address and postcode ? \\
+\midrule
+\textbf{Gold} & of course , \textit{prezzo} ' s address is \textit{22\_atlantis\_road} and postcode is \textit{cb30ad}
+ \\
+\midrule
+\midrule
+\specialcell[t]{\textbf{Seq2Seq+Copy}} & postcode a is is \textit{01223350688} UNK there get i for for today
+ \\
+\midrule
+\textbf{Seq2Seq} & the address is \textit{83\_regent\_street} and their postcode is \textit{cb58aq} \\
+
+\midrule
+\textbf{Mem2Seq} & the phone address is \textit{cb21uj}
+ \\
+\midrule
+\textbf{\sys\ } & the address is \textit{22\_atlantis\_road at 22\_atlantis\_road} the postcode is \textit{cb30ad} is there anything else i can help you with \\
+\bottomrule
+\end{tabular}
+\caption{Example from Camrest with 50\% OOV. The OOV entities present in the dialog are \{\textit{ethiopian}, \textit{22\_atlantis\_road}\}}
+\label{tab:cam50}
+\end{table*}

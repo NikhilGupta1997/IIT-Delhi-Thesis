@@ -1,4 +1,5 @@
-\section{Datasets}
+\section{Setup}
+\subsection{Datasets}
 
 We perform experiments on three task-oriented dialog datasets: bAbI Dialog \cite{BordesW16}, CamRest \cite{wenEMNLP2016}, and Stanford Multi-Domain Dataset \cite{Ericsigdial}.
 
@@ -15,21 +16,21 @@ We perform experiments on three task-oriented dialog datasets: bAbI Dialog \cite
 
 Each bAbI dialog task has an additional OOV test set, which helps to evaluate a model's robustness to change in information in the KB. A model that perfectly disentangles language and knowledge should have no drop in accuracy on the OOV test set when compared to the non-OOV test set. To measure the degree of disentanglement in a model, we generated 10 additional test sets for each real-world corpus by varying the percentage (in multiples of 10) of unseen entities in the KB. We systematically picked random KB entities and replaced all their occurrences in the dialog with new entity names. We will refer to these generated dialogs as the \emph{Knowledge Adaptability} (KA) test sets.
 
-\section{Baselines}
+\subsection{Baselines}
 We compare \sys\ against several existing end-to-end task-oriented dialog systems. These include retrieval models, such as the query reduction network (QRN) \cite{seo2016query}, memory network (MN) \cite{BordesW16}, and gated memory network (GMN) \cite{liu2017gated}. 
 
 We also compare against generative models such as a sequence-to-sequence model (Seq2Seq), a copy augmented Seq2Seq (Seq2Seq+Copy) \cite{ptr-unk}, and Mem2Seq \cite{mem2seq}.\footnote{We thank the authors for releasing a working code at \url{https://github.com/HLTCHKUST/Mem2Seq}} For fairness across models, we do not compare against key-value retrieval networks \cite{Ericsigdial} as they simplify the dataset by canonicalizing all KB words in dialogs.
 
 We noticed that the reported results in the Mem2Seq paper are not directly comparable, as they pre-processed\footnote{Mem2Seq used the following pre-processing on the data: 1) The subject (restaurant name) and object (rating) positions of the rating KB tuples in bAbI dialogs are flipped 2) An extra fact was added to the navigation tasks in SMD which included all the properties (distance, address, etc.) combined together  as the subject and \textit{poi} as the object. See Appendix.} training data in SMD and bAbI datasets. For fair comparisons, we re-run Mem2Seq on the original training datasets. For completeness we mention their reported results (with pre-processing) as Mem2Seq*.
 
-\section{Evaluation Metrics}
+\subsection{Evaluation Metrics}
 We evaluate \sys\ and other models based on their ability to generate valid responses. The per-response accuracy \cite{BordesW16} is the percentage of generated responses that exactly match their respective gold response. The per-dialog accuracy is the percentage of dialogs with all correctly generated responses. These accuracy metrics are a good measure for evaluating datasets with boilerplate responses such as bAbI. 
 
 To quantify performance on other datasets, we use BLEU \cite{papineni2002bleu} and Entity F1 \cite{eric2017copy} scores. BLEU measures the overlap of n-grams between the generated response and its gold response and has become a popular measure to compare task-oriented dialog systems. Entity F1 is computed by micro-F1 over KB entities in the entire set of gold responses. 
 
-\section{Human Evaluation}
+\subsection{Human Evaluation}
 We use two human evaluation experiments to compare (1) the \emph{usefulness} of a generated response with respect to solving the given task, and (2) the \emph{grammatical correctness} and \emph{fluency} of the responses on a 0--3 scale. We obtain human annotations by creating Human Intelligence Tasks (HITs) on Amazon Mechanical Turk (AMT). For each test condition (percentage of unseen entities), we sampled 50 dialogs from Camrest and SMD each, and two AMT workers labeled each system response for both experiments, resulting in 200 labels per condition per dataset per system. We evaluate four systems in this study, leading to a total of 1600 labels per condition. The detailed setup is given in the Appendix. 
 
-\section{Training}
+\subsection{Training}
 We train \sys\ using an Adam optimizer \cite{kingma2014adam} and apply gradient clipping with a clip-value of 40. We identify hyper-parameters based on the evaluation of the held-out validation sets. We sample word embedding, hidden layer, and cell sizes from \{64, 128, 256\} and learning rates from \{10$^{-3}$, 5$\times$10$^{-4}$, 10$^{-4}$\}. The hyper-parameter $\gamma$ in the loss function is chosen between [0-1.5]. The Disentangle Label Dropout rate is sampled from \{0.1, 0.2\}. The number of hops for multi-hop attention in the encoder is sampled from \{1, 3, 6\}. The best hyper-parameter setting for each dataset is reported in the Appendix.
 
