@@ -1,9 +1,9 @@
 %\documentclass[PhD]{iitddiss}
 %\documentclass[MS]{iitddiss}
 % \documentclass[MTech]{iitddiss}
-% \documentclass[Dual]{iitddiss}
+\documentclass[Dual]{iitddiss}
 %\documentclass[BTech]{iitddiss}
-\documentclass[Other]{iitddiss}
+% \documentclass[Other]{iitddiss}
 % IF YOU USE THE OTHER OPTION, THEN YOU MUST FILL OUT THE PROGRAM OPTION BELOW TOO
 \program{My Fancy Degree}
 
@@ -34,7 +34,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page
 
-\title{Dialog Systems for Task Oriented Dialog}
+\title{Knowledge Base Adaptation for Task Oriented Dialog}
 
 \author{Nikhil Gupta}
 \advisor{Prof. Mausam}
@@ -51,8 +51,7 @@
 
 \vspace*{0.5in}
 
-\noindent This is to certify that the thesis titled {\bf \LaTeX\ CLASS
-  FOR DISSERTATIONS SUBMITTED TO IIT-D}, submitted by {\bf Author},
+\noindent This is to certify that the thesis titled {\bf Knowledge Base Adaptation for Task Oriented Dialog}, submitted by {\bf Author},
   to the Indian Institute of Technology, Delhi, for
 the award of the degree of {\bf Master of Technology}, is a bona fide
 record of the research work done by him under our supervision.  The
@@ -65,44 +64,29 @@ diploma.
 \begin{singlespacing}
 \hspace*{-0.25in}
 \parbox{2.5in}{
-\noindent {\bf Prof.~1} \\
+\noindent {\bf Mausam} \\
 \noindent Professor \\
-\noindent Dept. of Physics\\
+\noindent Dept. of Computer Science\\
 \noindent IIT-Delhi, 600 036 \\
 }
 \hspace*{1.0in}
 \end{singlespacing}
 \vspace*{0.25in}
 \noindent Place: New Delhi\\
-Date: 8th June 2016
+Date: 28th June 2019
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Acknowledgements
 \acknowledgements
-
-Thanks to all those who made \TeX\ and \LaTeX\ what it is today.
+\input{000acknowledgements}
+\pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abstract
 
 \abstract
-
-\noindent KEYWORDS: \hspace*{0.5em} \parbox[t]{4.4in}{\LaTeX ; Thesis;
-  Style files; Format.}
-
-\vspace*{24pt}
-
-\noindent A \LaTeX\ class along with a simple template thesis are
-provided here.  These can be used to easily write a thesis suitable
-for submission at IIT-Delhi.  The class provides options to format
-PhD, MS, M.Tech.\ and B.Tech.\ thesis.  It also allows one to write a
-synopsis using the same class file.  Also provided is a BIB\TeX\ style
-file that formats all bibliography entries as per the IITD format.
-
-The formatting is as (as far as the author is aware) per the current
-institute guidelines.
-
+\input{010abstract}
 \pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,48 +101,28 @@ institute guidelines.
 \listoffigures
 \addcontentsline{toc}{chapter}{LIST OF FIGURES}
 \end{singlespace}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Abbreviations
-\abbreviations
-
-\noindent
-\begin{tabbing}
-xxxxxxxxxxx \= xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \kill
-\textbf{IITD}   \> Indian Institute of Technology, Delhi \\
-\textbf{RTFM} \> Read the Fine Manual \\
-\end{tabbing}
-
 \pagebreak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Notation
-
-\chapter*{\centerline{NOTATION}}
-\addcontentsline{toc}{chapter}{NOTATION}
-
-\begin{singlespace}
-\begin{tabbing}
-xxxxxxxxxxx \= xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \kill
-\textbf{$r$}  \> Radius, $m$ \\
-\textbf{$\alpha$}  \> Angle of thesis in degrees \\
-\textbf{$\beta$}   \> Flight path in degrees \\
-\end{tabbing}
-\end{singlespace}
-
-\pagebreak
-\clearpage
 
 % The main text will follow from this point so set the page numbering
 % to arabic from here on.
 \pagenumbering{arabic}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction
+\chapter{INTRODUCTION}
+\input{020intro}
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Background
+\chapter{BACKGROUND}
+\input{030background}
+\pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Introduction.
 
-\chapter{INTRODUCTION}
+\chapter{INTRODUCTION1}
 \label{chap:intro}
 
 This document provides a simple template of how the provided
@@ -186,7 +150,7 @@ the following command:
 Use this thesis as a basic template to format your thesis.  The
 \verb+iitddiss+ class can be used by simply using something like this:
 \begin{verbatim}
-\documentclass[PhD]{iitddiss}
+\documentclass[Dual]{iitddiss}
 \end{verbatim}
 
 To change the title page for different degrees just change the option
@@ -201,7 +165,7 @@ To write a synopsis simply use the \verb+synopsis.tex+ file as a
 simple template.  The synopsis option turns this on and can be used as
 shown below.
 \begin{verbatim}
-\documentclass[PhD,synopsis]{iitddiss}
+\documentclass[Dual]{iitddiss}
 \end{verbatim}
 
 Once again the title page may require some small amount of fine
