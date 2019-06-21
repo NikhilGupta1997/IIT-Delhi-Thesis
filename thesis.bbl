@@ -1,31 +1,30 @@
-\newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{RRR03}
+\begin{thebibliography}{1}
 
-\bibitem[K16]{sai:16}
-Sai Praneeth~Reddy K.
+\bibitem{sai:16}
+S.~P.~R. K.
 \newblock {\em \LaTeX\ class for dissertations submitted to {IIT-D}}.
 \newblock PhD thesis, Department of Computer Science and Engineering,
   IIT-Delhi, New Delhi -- 110016, July 2016.
 
-\bibitem[Lam86]{lamport:86}
-Leslie Lamport.
+\bibitem{lamport:86}
+L.~Lamport.
 \newblock {\em \LaTeX: A document preparation system}.
 \newblock Addision-Wesley, 1986.
 
-\bibitem[Ram01]{viz:mayavi}
-Prabhu Ramachandran.
+\bibitem{viz:mayavi}
+P.~Ramachandran.
 \newblock {MayaVi}: A free tool for {CFD} data visualization.
 \newblock In {\em 4th Annual CFD Symposium}. Aeronautical Society of India,
   August 2001.
 \newblock Software available at: {http://mayavi.sf.net}.
 
-\bibitem[RRR03]{pan:pr:flat-fst}
-Prabhu Ramachandran, S.~C. Rajan, and M.~Ramakrishna.
+\bibitem{pan:pr:flat-fst}
+P.~Ramachandran, S.~C. Rajan, and M.~Ramakrishna.
 \newblock A fast, two-dimensional panel method.
 \newblock {\em SIAM Journal on Scientific Computing}, 24(6):1864--1878, 2003.
 
-\bibitem[vR{\etalchar{+}}  ]{py:python}
-Guido van Rossum et~al.
+\bibitem{py:python}
+G.~van Rossum et~al.
 \newblock The {Python} programming language, 1991--.
 
 \end{thebibliography}

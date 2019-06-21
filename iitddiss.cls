@@ -87,11 +87,13 @@
 %% Bibliography
 % 
 % natbib allows easy switching of citation style and using it along
-% with the iitd.bst makes things perfect.
+% with the iitd.bst makes things perfect.s
 % \RequirePackage[authoryear,round]{natbib} 
-%\RequirePackage[numbers,square]{natbib} 
+% \RequirePackage[numbers,square]{natbib} 
 % \bibliographystyle{iitd}
-\bibliographystyle{alpha}
+% \bibliographystyle{alpha}
+\bibliographystyle{abbrv}
+% \renewcommand{\bibname}{References} 
 % \newcommand{\bibstyle@iitd}{\bibpunct{(}{)}{;}{a}{,}{,}%
     %  \gdef\NAT@biblabel##1{##1. }}
 %
@@ -268,6 +270,12 @@
    \def\abbreviations{\chapter*{\centerline{ABBREVIATIONS}}
    \addcontentsline{toc}{chapter}{ABBREVIATIONS}
    }
+   
+   % REFERENCES
+   %
+   \def\references{\chapter*{\centerline{REFERENCES}}
+   \addcontentsline{toc}{chapter}{REFERENCES}
+   }
 
    % Use the nomencl package for the NOTATION section.
 
@@ -304,9 +312,9 @@
    %LIST OF PAPERS
    \def\listofpapers{
            \normalbaselines
-           \chapter*{\centerline{LIST OF PAPERS BASED ON THESIS}}
-           \markboth{LIST OF PAPERS BASED ON THESIS}{LIST OF PAPERS BASED ON THESIS}
-           %\addcontentsline{toc}{chapter}{LIST OF PAPERS BASED ON THESIS}
+           \chapter*{\centerline{CITATIONS}}
+           % \markboth{LIST OF PAPERS BASED ON THESIS}{LIST OF PAPERS BASED ON THESIS}
+           \addcontentsline{toc}{chapter}{CITATIONS}
    }
 
    

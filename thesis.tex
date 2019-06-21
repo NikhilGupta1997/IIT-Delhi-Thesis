@@ -28,8 +28,18 @@
 \lhead{\fancyplain{}{\rightmark}} % 1. sectionname, 1.1 subsection name etc
 \cfoot{\textcopyright \text{ } \the\year, \emph{Indian Institute of Technology Delhi}}
 \renewcommand{\footrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Renewed commands to set the titles of various pages correctly.
+\addto\captionsenglish{\renewcommand{\contentsname}{TABLE OF CONTENTS}}
+\addto\captionsenglish{\renewcommand{\listfigurename}{LIST OF FIGURES}}
+\addto\captionsenglish{\renewcommand{\listtablename}{LIST OF TABLES}}
+\addto\captionsenglish{\renewcommand{\bibname}{REFERENCES}}
+% \addto\captionsenglish{\renewcommand{\appendixname}{APPENDIX}}
+
 \begin{document}
 
+% \renewcommand{\contentsname}{List of abstracts}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page
@@ -51,9 +61,9 @@
 
 \vspace*{0.5in}
 
-\noindent This is to certify that the thesis titled {\bf Knowledge Base Adaptation for Task Oriented Dialog}, submitted by {\bf Author},
+\noindent This is to certify that the thesis titled {\bf Knowledge Base Adaptation for Task Oriented Dialog}, submitted by {\bf Nikhil Gupta},
   to the Indian Institute of Technology, Delhi, for
-the award of the degree of {\bf Master of Technology}, is a bona fide
+the award of the degree of {\bf Bachelor and Master of Technology}, is a bona fide
 record of the research work done by him under our supervision.  The
 contents of this thesis, in full or in parts, have not been submitted
 to any other Institute or University for the award of any degree or
@@ -110,195 +120,62 @@ Date: 28th June 2019
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Introduction
 \chapter{INTRODUCTION}
+\label{chap:intro}
 \input{020intro}
 \pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Background
 \chapter{BACKGROUND}
+\label{chap:background}
 \input{030background}
 \pagebreak
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Introduction.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Approach
+\chapter{APPROACH}
+\label{chap:approach}
+\input{040approach}
+\pagebreak
 
-\chapter{INTRODUCTION1}
-\label{chap:intro}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Work Division
+\chapter{WORK DIVISION}
+\label{chap:work}
+\input{050division}
+\pagebreak
 
-This document provides a simple template of how the provided
-\verb+iitddiss.cls+ \LaTeX\ class is to be used.  Also provided are
-several useful tips to do various things that might be of use when you
-write your thesis.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implementation
+\chapter{IMPLEMENTATION}
+\label{chap:implementation}
+\input{060implementation}
+\pagebreak
 
-To compile your sources run the following from the command line:
-\begin{verbatim}
-% pdflatex thesis.tex
-% bibtex thesis
-% pdflatex thesis.tex
-% pdflatex thesis.tex
-\end{verbatim}
-Modify this suitably for your sources.
-
-To generate PDF's with the links from the \verb+hyperref+ package use
-the following command:
-\begin{verbatim}
-% dvipdfm -o thesis.pdf thesis.dvi
-\end{verbatim}
-
-\section{Package Options}
-
-Use this thesis as a basic template to format your thesis.  The
-\verb+iitddiss+ class can be used by simply using something like this:
-\begin{verbatim}
-\documentclass[Dual]{iitddiss}
-\end{verbatim}
-
-To change the title page for different degrees just change the option
-from \verb+PhD+ to one of \verb+MS+, \verb+MTech+ or \verb+BTech+.
-The dual degree pages are not supported yet but should be quite easy
-to add.  The title page formatting really depends on how large or
-small your thesis title is.  Consequently it might require some hand
-tuning.  Edit your version of \verb+iitddiss.cls+ suitably to do this.
-I recommend that this be done once your title is final.
-
-To write a synopsis simply use the \verb+synopsis.tex+ file as a
-simple template.  The synopsis option turns this on and can be used as
-shown below.
-\begin{verbatim}
-\documentclass[Dual]{iitddiss}
-\end{verbatim}
-
-Once again the title page may require some small amount of fine
-tuning.  This is again easily done by editing the class file.
-
-This sample file uses the \verb+hyperref+ package that makes all
-labels and references clickable in both the generated DVI and PDF
-files.  These are very useful when reading the document online and do
-not affect the output when the files are printed.
-
-
-\section{Example Figures and tables}
-
-Fig.~\ref{fig:iitd} shows a simple figure for illustration along with
-a long caption.  The formatting of the caption text is automatically
-single spaced and indented.  Table~\ref{tab:sample} shows a sample
-table with the caption placed correctly.  The caption for this should
-always be placed before the table as shown in the example.
-
-
-\begin{figure}[htpb]
-  \begin{center}
-    \resizebox{50mm}{!} {\includegraphics *{iitd_logo.png}}
-    \resizebox{50mm}{!} {\includegraphics *{iitd_logo.png}}
-    \caption {Two IITD logos in a row.  This is also an
-      illustration of a very long figure caption that wraps around two
-      two lines.  Notice that the caption is single-spaced.}
-  \label{fig:iitd}
-  \end{center}
-\end{figure}
-
-\begin{table}[htbp]
-  \caption{A sample table with a table caption placed
-    appropriately. This caption is also very long and is
-    single-spaced.  Also notice how the text is aligned.}
-  \begin{center}
-  \begin{tabular}[c]{|c|r|} \hline
-    $x$ & $x^2$ \\ \hline
-    1  &  1   \\
-    2  &  4  \\
-    3  &  9  \\
-    4  &  16  \\
-    5  &  25  \\
-    6  &  36  \\
-    7  &  49  \\
-    8  &  64  \\ \hline
-  \end{tabular}
-  \label{tab:sample}
-  \end{center}
-\end{table}
-
-\section{Bibliography with BIB\TeX}
-
-I strongly recommend that you use BIB\TeX\ to automatically generate
-your bibliography.  It makes managing your references much easier.  It
-is an excellent way to organize your references and reuse them.  You
-can use one set of entries for your references and cite them in your
-thesis, papers and reports.  If you haven't used it anytime before
-please invest some time learning how to use it.
-
-I've included a simple example BIB\TeX\ file along in this directory
-called \verb+refs.bib+.  The \verb+iitddiss.cls+ class package which
-is used in this thesis and for the synopsis uses the \verb+natbib+
-package to format the references along with a customized bibliography
-style provided as the \verb+iitd.bst+ file in the directory containing
-\verb+thesis.tex+.  Documentation for the \verb+natbib+ package should
-be available in your distribution of \LaTeX.  Basically, to cite the
-author along with the author name and year use \verb+\cite{key}+ where
-\verb+key+ is the citation key for your bibliography entry.  You can
-also use \verb+\citet{key}+ to get the same effect.  To make the
-citation without the author name in the main text but inside the
-parenthesis use \verb+\citep{key}+.  The following paragraph shows how
-citations can be used in text effectively.
-
-More information on BIB\TeX\ is available in the book by
-\cite{lamport:86}.  There are many
-references~\citep{lamport:86,sai:16} that explain how to use
-BIB\TeX.  Read the \verb+natbib+ package documentation for more
-details on how to cite things differently.
-
-Here are other references for example.  \citet{viz:mayavi} presents a
-Python based visualization system called MayaVi in a conference paper.
-\citet{pan:pr:flat-fst} illustrates a journal article with multiple
-authors.  Python~\citep{py:python} is a programming language and is
-cited here to show how to cite something that is best identified with
-a URL.
-
-\section{Other useful \LaTeX\ packages}
-
-The following packages might be useful when writing your thesis.
-
-\begin{itemize}
-\item It is very useful to include line numbers in your document.
-  That way, it is very easy for people to suggest corrections to your
-  text.  I recommend the use of the \texttt{lineno} package for this
-  purpose.  This is not a standard package but can be obtained on the
-  internet.  The directory containing this file should contain a
-  lineno directory that includes the package along with documentation
-  for it.
-
-\item The \texttt{listings} package should be available with your
-  distribution of \LaTeX.  This package is very useful when one needs
-  to list source code or pseudo-code.
-
-\item For special figure captions the \texttt{ccaption} package may be
-  useful.  This is specially useful if one has a figure that spans
-  more than two pages and you need to use the same figure number.
-
-\item The notation page can be entered manually or automatically
-  generated using the \texttt{nomencl} package.
-
-\end{itemize}
-
-More details on how to use these specific packages are available along
-with the documentation of the respective packages.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implementation
+\chapter{RESULTS}
+\label{chap:results}
+\input{070results}
+\pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appendices.
 
 \appendix
 
-\chapter{A SAMPLE APPENDIX}
-
-Just put in text as you would into any chapter with sections and
-whatnot.  Thats the end of it.
+\chapter{APPENDIX}
+\label{chap:appendix}
+\input{080appendix}
+\pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography.
 
-\begin{singlespace}
-  \bibliography{refs}
-\end{singlespace}
-
+\label{chap:references}
+\bibliography{survey}
+\addcontentsline{toc}{chapter}{REFERENCES}
+\pagebreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % List of papers
