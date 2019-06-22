@@ -102,11 +102,16 @@ There has been very little progress made end-to-end task-oriented dialogs, as mo
 % Contributions
 \section{Contributions}
 
-We propose \sys, a novel network that effectively disentangles the language and knowledge models, and also achieves state-of-the-art performance on three existing datasets. 
+To address our first problem statement, we propose \sys, a novel network that effectively disentangles the language and knowledge models, and also achieves state-of-the-art performance on three existing datasets. 
 
-To achieve this, \sys\ makes two design choices. First, it encodes the conversational input as a {\em bag of sequences} (\textsc{BoSs}) memory, in which the input representation is built at two levels of abstraction. The \emph{higher level} flat memory encodes the KB tuples and utterances to facilitate effective inferencing over them. The \emph{lower level} encoding of each individual utterance and tuple is constructed via a sequence encoder (Bi-GRU). This enables the model to maintain the sequential context surrounding each token, aiding in better interpretation of unseen tokens at test time. Second, we augment the standard cross-entropy loss used in dialog systems with an additional loss term to encourage the model to only copy KB tokens in a response, instead of generating them via the language model. This combination of sequence encoding and additional loss (along with dropout) helps in effective disentangling between language and knowledge. 
+To achieve this, \sys\ makes three design choices. 
+First, \sys\ uses an encoder-decoder architecture so that it can stitch the next utterance one word at a time as compared to a typical retrieval based model which selects a certain response from a fixed set of responses. 
+Second, it encodes the conversational input as a {\em bag of sequences} (\textsc{BoSs}) memory, in which the input representation is built at two levels of abstraction. The \emph{higher level} flat memory encodes the KB tuples and utterances to facilitate effective inferencing over them. The \emph{lower level} encoding of each individual utterance and tuple is constructed via a sequence encoder (Bi-GRU). This enables the model to maintain the sequential context surrounding each token, aiding in better interpretation of unseen tokens at test time. 
+Third, we augment the standard cross-entropy loss used in dialog systems with an additional loss term to encourage the model to only copy KB tokens in a response, instead of generating them via the language model. This combination of sequence encoding and additional loss (along with dropout) helps in effective disentangling between language and knowledge. 
 
-We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce a {\em knowledge adaptability} (KA) evaluation, in which we systematically increase the percentage of previously unseen entities in the KB. We find that \sys\ is highly robust across all percentage levels. Finally, we also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
+We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce {\em adversarial attacks} in which we systematically increase the percentage of previously unseen entities in the KB. We summarise these attacks as our {\em knowledge adaptability} (KA) evaluation. We find that \sys\ is highly robust across all percentage levels in all the standard metrics. We also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
+
+To address the secoond problem statement, we extend \sys\ and add a novel RL-decoder which generates the required API call at a fixed turn of the dialog. We train the system using a buffer containing valid API calls and do a mix of off-policy and on-policy sampling. We use a pseudo-reward for learning which is computed using a combination of precision and recall on the retrieved results and the gold system response KB entities. We were successfully able to achieve similar accuracies to the original \sys\ model trained on the fully annotated dataset.
 
 Overall, our contributions are:
 
@@ -114,7 +119,8 @@ Overall, our contributions are:
  \item We propose \sys, a novel architecture to disentangle the language model from knowledge incorporation in task-oriented dialogs.
  \item We introduce a {\em knowledge adaptability} evaluation to measure the ability of dialog systems to scale performance to unseen KB entities.
  \item Our experiments show that \sys\ is competitive or significantly better, measured via standard metrics, than the existing baselines on three datasets.
+ \item We extend the \sys\ architecture and add a novel RL-based API generator which matches state-of-the-art performance on modified datasets which lack explicit API annotation.
 \end{enumerate}
 
-We release our code and {\em knowledge adaptability} (KA) test sets for further use by the research community. \url{ https://github.com/dair-iitd/BossNet}.
+We release our code and {\em knowledge adaptability} (KA) test sets for further use by the research community. \url{ https://github.com/dair-iitd/BossNet}. We also release our extended code base along with the modified test sets. \url{ https://github.com/NikhilGupta1997/BossNet-RL}.
 
