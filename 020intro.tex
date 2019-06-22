@@ -60,23 +60,17 @@ Moreover, for achieving good progress towards the user's task, the agent must al
 
 We will also focus on enabling the system to predict the correct API call without explicit annotations. This will help us twofold: (1) we will be able to leverage larger databanks for training end-to-end dialog systems which don't have this additional KB annotation, and (2) we will be able to predict more efficient APIs to solve the task than those originally used.
 
-To summarize, the goal of our research is to build a dialog system that takes as input 1) a large set of task-oriented conversation logs between a user and an agent/domain expert, 2) a knowledge base used to generate agent response and learn a dialog system that can mimic the agent to accomplish a user's task. 
+To summarize, the goal of our research is to build a dialog system that takes as input (1) a large set of task-oriented conversation logs between a user and an agent/domain expert, (2) a knowledge base used to generate agent response and learn a dialog system that can mimic the agent to accomplish a user's task. 
 With this goal in mind we can broadly formulate two distinct problems as follows:
 
 \noindent{\bf Problem 1} {\em Create an end-to-end dialog system that effectively disentangles the language and knowledge models.}
 
-The system must be capable to handle changes in the database which we will simulate using systematic adversarial attacks which mutates KB information. We will 
+The system must be capable to handle changes in the database which we will simulate using systematic adversarial attacks which mutates KB information. We will test the effectiveness of the system on three standard datasets used for task-oriented dialog -- bAbI \cite{BordesW16}, CamRest \cite{wenEMNLP2016}, and Stanford Multi-Domain Dataset \cite{Ericsigdial}. Of these, the last two are real-world datasets. We will evaluate the responses using standard metrics in the task-oriented setting.
 
-\noindent{\bf Problem 2} {\em Enable the previous end-to-end dialog system with an API predictor at a fixed defined time.}
+\noindent{\bf Problem 2} {\em Enable the end-to-end system to achieve comparable performance on datasets without explicit Knowledge Base API annotations.}
 
-The previous datasets will have to be augmented to remove the extra annotation depicting the API information and a predict API signal should be inserted in its exact place. The system will be evaluated using the same metrics as before and the objective will be to acheive the same performance as the model trained in the first problem definition.
+The mentions datasets will have to be augmented to remove the extra annotation depicting the API information and a {\em"predict API"} signal should be inserted in its exact place. The system will be evaluated using the same metrics as before and the objective will be to acheive the same performance as the model trained in the first problem definition.
 
-
-We propose \sys, a novel network that effectively disentangles the language and knowledge models, and also achieves state-of-the-art performance on three existing datasets. 
-
-To achieve this, \sys\ makes two design choices. First, it encodes the conversational input as a {\em bag of sequences} (\textsc{BoSs}) memory, in which the input representation is built at two levels of abstraction. The \emph{higher level} flat memory encodes the KB tuples and utterances to facilitate effective inferencing over them. The \emph{lower level} encoding of each individual utterance and tuple is constructed via a sequence encoder (Bi-GRU). This enables the model to maintain the sequential context surrounding each token, aiding in better interpretation of unseen tokens at test time. Second, we augment the standard cross-entropy loss used in dialog systems with an additional loss term to encourage the model to only copy KB tokens in a response, instead of generating them via the language model. This combination of sequence encoding and additional loss (along with dropout) helps in effective disentangling between language and knowledge. 
-
- We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce a {\em knowledge adaptability} (KA) evaluation, in which we systematically increase the percentage of previously unseen entities in the KB. We find that \sys\ is highly robust across all percentage levels. Finally, we also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Motivation
@@ -110,6 +104,12 @@ There has been very little progress made end-to-end task-oriented dialogs, as mo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Contributions
 \section{Contributions}
+
+We propose \sys, a novel network that effectively disentangles the language and knowledge models, and also achieves state-of-the-art performance on three existing datasets. 
+
+To achieve this, \sys\ makes two design choices. First, it encodes the conversational input as a {\em bag of sequences} (\textsc{BoSs}) memory, in which the input representation is built at two levels of abstraction. The \emph{higher level} flat memory encodes the KB tuples and utterances to facilitate effective inferencing over them. The \emph{lower level} encoding of each individual utterance and tuple is constructed via a sequence encoder (Bi-GRU). This enables the model to maintain the sequential context surrounding each token, aiding in better interpretation of unseen tokens at test time. Second, we augment the standard cross-entropy loss used in dialog systems with an additional loss term to encourage the model to only copy KB tokens in a response, instead of generating them via the language model. This combination of sequence encoding and additional loss (along with dropout) helps in effective disentangling between language and knowledge. 
+
+We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce a {\em knowledge adaptability} (KA) evaluation, in which we systematically increase the percentage of previously unseen entities in the KB. We find that \sys\ is highly robust across all percentage levels. Finally, we also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
 
 Overall, our contributions are:
 
