@@ -1,12 +1,59 @@
-Compared to the traditional slot-filling based dialog  \cite{williams2007partially,wen2017network,williams2017hybrid}, 
-end-to-end training methods (e.g., \cite{BordesW16}, this work) do not require handcrafted state representations and their corresponding annotations in each dialog. Thus, they can easily be adapted to a new domain.  We discuss end-to-end approaches along two verticals: 1) decoder: whether the response is retrieved or generated and 2) encoder: how the dialog history and KB tuples are encoded.
-
-Most of the existing end-to-end approaches  {\em retrieve} a response from a pre-defined set \cite{BordesW16,liu2017gated,seo2016query}. These methods are generally successful when they have to provide boilerplate responses -- they cannot construct responses by using words in KB not seen during training. 
-Alternatively, generative approaches are used where the response is {\em generated} one word at a time \cite{eric2017copy,mem2seq}. These approaches mitigate the unseen entity problem by incorporating the ability to copy words from the input \cite{vinyals2015pointer,gu2016incorporating}. The copy mechanism has also found success in summarization \cite{nallapati2016abstractive,see2017get} and machine translation \cite{ptr-unk}. \sys\ is also a copy incorporated generative approach. 
-
-For encoding, some approaches represent the dialog history as a sequence \cite{eric2017copy,ptr-unk}. Unfortunately, using a single long sequence for encoding also enforces an order over the set of KB tuples making it harder to perform inferencing over them. Other approaches represent the dialog context as a bag. Original Memory Networks \cite{BordesW16} and its extensions encode each memory element (utterance) as an average of all constituent words -- this cannot point to individual words, and hence cannot be used with a copy mechanism. Mem2Seq encodes each word individually in a flat memory. Unfortunately, this loses the contextual information around a word, which is needed to decipher an unseen word. In contrast, \sys\ uses a bag of sequences encoding, where KB tuples are a set for easier inference, and also each utterance is a sequence for effectively learning when to copy.  
-
 \section{Related Work}
+
+Dialog systems can be broadly divided into two categories: open domain \cite{vinyals2015neural,serban2016building} and task-oriented dialog systems. Open domain systems generate responses based on just the dialog history, whereas the task-oriented systems generate responses based on the dialog history and a KB associated with the task. 
+
+Task oriented dialogs systems can be further divided into two: modular and end-to-end trainable dialog systems. Modular dialog systems \cite{wen2017network,williams2017hybrid,williams2007partially} require intermediate supervision on dialog transcripts to train each of its modules. Our work falls under end-to-end trainable dialog systems, which requires just the dialog transcripts and no intermediate supervision to train.  We discuss end-to-end trainable neural models along two dimensions: 1) decoding: how the response is retrieved or generated and 2) encoding: how the dialog context (dialog history and KB tuples) are represented.  
+
+Most of the existing approaches \cite{BordesW16,liu2017gated,seo2016query,wu2017end} {\em retrieve} a response from a pre-defined set. These methods are generally successful when they have to provide boilerplate responses -- they cannot construct new responses or use words not seen during training. 
+To improve upon these, generative approaches are used where the next response is {\em generated} one word at a time \cite{eric2017copy,mem2seq}. These approaches also benefit the OOV problem by incorporating the ability to copy words from the input \cite{vinyals2015pointer,gu2016incorporating}. This copy mechanism has also found success in summarization \cite{nallapati2016abstractive,see2017get} and machine translation \cite{ptr-unk}. \sys\ is a copy incorporated generative approach.
+
+%The dialog context consists of utterances in the past and KB tuples. 
+% For encoding, existing approaches either represent the dialog context as {\em set of sets} \cite{mem2seq,BordesW16,liu2017gated} or {\em sequence of sequences} \cite{eric2017copy,ptr-unk}. {\em Set of sets} represents past utterances as a bag of words making it difficult to capture context and work with words not seen during training. {\em Seq of seqs} enforces an order over the set of KB tuples making it harder to perform inferencing over multiple KB tuples. \sys\ uses a {\em set of seqs} representation, which can both capture word contexts and perform inferencing over KB tuples.
+
+For encoding, some approaches represent the dialog history as a sequence \cite{eric2017copy,ptr-unk}. Unfortunately, using a single long sequence for encoding also enforces an order over the set of KB tuples making it harder to perform inferencing over them. Other approaches represent the dialog context as a bag. Original Memory Networks \cite{BordesW16} and its extensions encode each memory element (utterance) as an average of all constituent words -- this cannot point to individual words, and hence cannot be used with a copy mechanism. Mem2Seq encodes each word individually in a flat memory. Unfortunately, this loses the contextual information around a word, which is needed to decipher an unseen word. In contrast, \sys\ uses a bag of sequences encoding, where KB tuples are a set for easier inference, and also each utterance is a sequence for effectively learning when to copy. We go into further detail below highlighting the differences between the two models.
+
+
+%Attention over hierarchical representation of sentences and words has been used in document classification \cite{yang2016hierarchical} and  abstractive text summarization \cite{nallapati2016abstractive}. These representations defines the document as a sequence of sentences while we propose a set to better represent KB tuples.
+
+\subsection{Comparison with Mem2Seq}
+\label{sec:relatedmem2seq}
+The closest to our model is the recently introduced Mem2Seq \cite{mem2seq}, which also combines the multi-hop reasoning of memory networks with the generative decoding augmented with a copy mechanism. While similar in spirit to \sys, there are significant differences in the two architectures. We illustrate these with Figure \ref{fig:intro}, which shows an example dialog along with an associated KB in both Mem2Seq and \sys\ memories. %Figure \ref{fig:intro}b shows how the dialog is represented in the Mem2Seq memory.
+
+First, the memory in Mem2Seq is a flat representation which operates in part at utterance level and in part at word level. In particular, the individual words of a user/machine utterance are stored in their own memory cells, whereas a KB tuple gets only one memory cell -- the aggregation is done in a bag of words fashion, using words in the entire tuple.  For example, the memory element \textit{m1} contains a full KB tuple and \textit{m15} contains only the word ``french'' from the second user utterance.
+
+This implies that Mem2Seq's copy mechanism  can only point to a specific KB tuple, but cannot point to a specific constituent of the tuple. This forces Mem2Seq to make a second modeling choice, of allowing only the ``object'' entity of a tuple to be used in the next response. These choices result in three limitations of Mem2Seq, regarding the scenarios in which Mem2Seq can be useful. 
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[scale=0.9]{assets/figures/mem2seq.pdf}
+\caption{(a) an example dialog with history and KB tuples. (b) an illustration of Mem2Seq memory. (c) an illustration of \sys\ memory}
+\label{fig:intro}
+\end{figure}
+
+%Our model has the following differences when compared to Mem2Seq: 1) The memory in Mem2Seq has a flat representation whereas we propose a hierarchical representation. 2) The performance of Mem2Seq is dependent on the ordering of KB tuples (subject or object), while the performance of \sys\ is independent of any such ordering. 
+
+% Describe the memory layout
+% Each memory element contains either a KB tuple or a word from an utterance in the dialog history. For example, 
+
+% Describe problem #1 and #2
+First, Mem2Seq expects each tuple to be serialized by the KB API in way that the object always comes last. This may or may not always be in control of the neural model.  Second, because each utterance word has a unique memory cell. it loses the context in which the word was mentioned. As a result, the model cannot learn that ``french'' and other cuisines are usually followed by the word ``food''. This causes poor generalization where the model has to understand an OOV word from the user utterance (e.g., a new cuisine or city name). 
+% The vector representation of each memory element is computed using a bag-of-words model. Thus the memory structure prevents the model to generalize by learning clues from the context. 
+
+% Describe problem #3
+Finally, the model design dictates that the subject or the predicate from a KB fact can never be copied during the decode step. This adds severe limitations in practical settings. For example, the KB results in the original bAbI dataset \cite{BordesW16} came in format of {\em attribute(restaurant\_name, restaurant\_attribute)}. Since restaurant name is never an object, Mem2Seq would never be able to copy it when making recommendations. As a result, experiments with Mem2Seq necessitated a training data preprocessing, in which all rating facts had to be inverted into {\em rating(restaurant\_rating, restaurant\_name)}, so that the name could become an object and could be copied. 
+
+We believe that this adds severe limitations on the scenarios in which Mem2Seq is applicable. We perform several experiments on the original (unprocessed) datasets to highlight the loss in performance due to these modeling choices. 
+In contrast, \sys\ uses a hierarchical memory that can copy {\em any} word from the whole dialog history (see Figure \ref{fig:intro}(c)). It models each cell as a {\em sequence} of words, which also enables it to learn contextual cues for each word, leading to better OOV generalization. 
+
+%The designer needs to carefully choose how a tuple should be placed in the memory. In the example, the object of \textit{r\_phone} (placed at the bottom) is chosen to be the word to copy, while the subject is chosen for \textit{r\_rating}. The placement is dictated by what needs to be copied while generating the response. In the experiments, how ordering affects its performance.
+
+%In the dialog bAbI dataset \cite{BordesW16}, the name of the restaurant and the phone numbers are needed to be copied. Mem2Seq will not be able to generate a response such as ``amour_bistro has a rating of 5'' as the rating object is not addressable by the copy mechanism. 
+
+%Also, if a word occurs more than once in the memory, only the last occurrence of the word is used for computing the copy distribution. This makes the system depend on the order in which KB tuples are placed in the memory
+%\todo{Does it fit better now ?}
+
+\section{Components Survey}
 
 \sys\ architecture has a {\em multi-hop encoder}, and a {\em pointer network} decoder with a {\em hierarchical attention} over the memory. We briefly survey these three strands of related research.
 
@@ -24,18 +71,19 @@ MN \cite{BordesW16}, gated MN and QRN have been used to learn task-oriented dial
 %\cite{see2017get} combined the pointer distribution and the decode vocabulary distribution using a soft switch, where as \cite{nallapati2016abstractive} used either the pointer distribution or the decode vocabulary distribution based on a hard decision. The former learns the soft switch latently without explicit labels, while the latter requires the hard decision to be labeled. Since, we wish the system to automatically learn when to generate and when to point, we use an approach similar to one proposed in \cite{see2017get}.
 
 Eric and Manning
-\cite{eric2017copy} use a copy augmented Seq2seq model for learning task oriented dialogues. This approach uses a hard decision to pick between the generate and pointer distributions. This model is explicitly trained to only point to words that are from the KB and generate the rest. This is the closest work to our approach, but has a flat memory and doesn't incorporate multi-hop reasoning.
+\cite{eric2017copy} use a copy augmented Seq2seq model for learning task-oriented dialogues. This approach uses a hard decision to pick between the generate and pointer distributions. This model is explicitly trained to only point to words that are from the KB and generate the rest. This is the closest work to our approach, but has a flat memory and doesn't incorporate multi-hop reasoning.
 
 \vspace{0.5ex}
 \noindent\textbf{Hierarchical Attention} was first introduced for document classification \cite{yang2016hierarchical}. Here, each document is represented as a set of sentences and each sentence as a set of words. For each sentence, an attention distribution is computed over words to identify informative words and compute a sentence representation. A similar approach identifies informative sentences to compute a document representation. Hierarchical attention has also been used for abstractive text summarization \cite{nallapati2016abstractive}.
 \sys\ similarly computes two attention distributions over different levels of the input. A word-level distribution over the words in each utterance and an utterance-level distribution over all the input utterances. This a function of these two distributions is used when copying a word in the decode process.
 
-\section{Background}
-In this section, we briefly describe the preliminaries over which the proposed Hierarchical Pointer Memory Network (\sys) is built upon. This includes (1) the multi-hop encoder in MN and (2) a standard sequence decoder with attention \cite{bahdanau2014neural}.
+\section{Preliminaries}
+\label{sec:prelims}
+In this section, we briefly describe the preliminaries over which the proposed \sys\ architecture is built upon as explained in the previous section. This includes (1) the multi-hop encoder in MN and (2) a standard sequence decoder with attention \cite{bahdanau2014neural}
 
-\subsection{Multi-Hop Encoder in MN}
+\noindent\textbf{Multi-Hop Encoder in MN}
 \label{ssec:mhencoder}
-The multi-hop encoder in described in end-to-end memory network \cite{sukhbaatar2015end} takes as input a query $q \in \mathbb{R}^{d}$ and a memory $M = \{ m_i; m_i \in \mathbb{R}^{d}\}$ and generates a reduced query $q_r \in \mathbb{R}^{d}$. Here $d$ is the embedding dimension. Augmenting the query by attending it over the memory elements, to capture relevant information necessary to generate the response, is referred to as a \textit{hop}. A single hop reduced query is computed as follows:
+The multi-hop encoder as described in end-to-end memory network \cite{sukhbaatar2015end} takes as input a query $q \in \mathbb{R}^{d}$ and a memory $M = \{ m_i; m_i \in \mathbb{R}^{d}\}$ and generates a reduced query $q_r \in \mathbb{R}^{d}$. Here $d$ is the embedding dimension. Augmenting the query by attending it over the memory elements, to capture relevant information necessary to generate the response, is referred to as a \textit{hop}. A single hop reduced query is computed as follows:
 \begin{eqnarray}
 p_i &=& \text{softmax}(q^T m_i) \\
 o &=& W_r \sum\nolimits_i p_i m_i \\
@@ -43,7 +91,7 @@ q_r &=& o + q
 \end{eqnarray}
 where $W_r \in \mathbb{R}^{d \times d}$. The hop step can be re-iterated, by assigning the output of the previous hop as the new input query (i.e.,) $q=q_r$. If the encoder has $K$ hops, then the final output is represented as $q^k_r$. The multiple hops enable inference over multiple memory elements.
 
-\subsection{Sequence Decoder with Attention}
+\noindent\textbf{Sequence Decoder with Attention}
 \label{ssec:rnndecoder}
 The sequence decoder predicts the token $y_t$ in the output sequence $\langle y_1  y_2  \ldots  y_T \rangle$, given the decoder state at time $t$, $s_t$, and a set of input contexts $Z=\{z_i ; z_i \in \mathbb{R}^{d}\}$. For simplicity, we denote this conditional distribution of generating the next word as just $P_g(y_t)$. To compute $P_g(y_t)$, first an attention distribution $\alpha^t$ is computed over the input contexts $z_i$ using Loung attention \cite{luong2015effective}. 
 \begin{gather}

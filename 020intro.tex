@@ -15,14 +15,14 @@ Dialog systems, also referred to as chatbots or virtual agents are systems that 
 \begin{figure}
 \centering
 \begin{subfigure}{\textwidth}
- \includegraphics[width=\linewidth]{assets/figures/dialog_system.png}
+ \includegraphics[width=\linewidth]{assets/figures/components.pdf}
  \caption{Multi-Component Dialog System}\label{fig:systemfull}
 \end{subfigure}
 
 \vspace*{0.5in}
 
 \begin{subfigure}{\textwidth}
- \includegraphics[width=\linewidth]{assets/figures/end2end.png}
+ \includegraphics[width=\linewidth]{assets/figures/end2end.pdf}
  \caption{End-to-end Dialog System}\label{fig:end2end}
 \end{subfigure}
 \caption{Types of Dialog System Architecture}
@@ -71,6 +71,21 @@ The system must be capable to handle changes in the database which we will simul
 
 The mentions datasets will have to be augmented to remove the extra annotation depicting the API information and a {\em"predict API"} signal should be inserted in its exact place. The system will be evaluated using the same metrics as before and the objective will be to acheive the same performance as the model trained in the first problem definition.
 
+\begin{figure}
+\centering
+% \begin{subfigure}{\textwidth}
+%  \includegraphics[width=\linewidth]{assets/figures/dialog_system.png}
+%  \caption{Multi-Component Dialog System}\label{fig:systemfull}
+% \end{subfigure}
+
+% \vspace*{0.5in}
+
+% \begin{subfigure}{\textwidth}
+ \includegraphics[width=\linewidth]{assets/figures/dialog_sample.png}
+%  \caption{End-to-end Dialog System}\label{fig:end2end}
+% \end{subfigure}
+\caption{Add a diagram of a sample diagram and explain what is an API, query and response}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Motivation
@@ -111,7 +126,7 @@ Third, we augment the standard cross-entropy loss used in dialog systems with an
 
 We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce {\em adversarial attacks} in which we systematically increase the percentage of previously unseen entities in the KB. We summarise these attacks as our {\em knowledge adaptability} (KA) evaluation. We find that \sys\ is highly robust across all percentage levels in all the standard metrics. We also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
 
-To address the secoond problem statement, we extend \sys\ and add a novel RL-decoder which generates the required API call at a fixed turn of the dialog. We train the system using a buffer containing valid API calls and do a mix of off-policy and on-policy sampling. We use a pseudo-reward for learning which is computed using a combination of precision and recall on the retrieved results and the gold system response KB entities. We were successfully able to achieve similar accuracies to the original \sys\ model trained on the fully annotated dataset.
+To address the second problem statement, we extend \sys\ and add a novel RL-decoder which generates the required API call at a fixed turn of the dialog. We train the system using a buffer containing valid API calls and do a mix of off-policy and on-policy sampling. We use a pseudo-reward for learning which is computed using a combination of precision and recall on the retrieved results and the gold system response KB entities. We were successfully able to achieve similar accuracies to the original \sys\ model trained on the fully annotated dataset.
 
 Overall, our contributions are:
 
