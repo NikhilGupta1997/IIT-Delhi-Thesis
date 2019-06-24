@@ -14,22 +14,45 @@ The proposed Bag-of-Sequences Memory Network has an encoder-decoder architecture
 \label{fig:simsystem}
 \end{figure}
 
+\begin{figure}
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/figures/memory_flat.pdf}
+ \caption{Simple Memory Representation (Sentence Level)}\label{fig:flatMemory}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/figures/memory_hier.pdf}
+ \caption{{\sc BoSs} Memory Representation (Sentence + Word Level)}\label{fig:hierMemory}
+\end{subfigure}
+\caption{Types of Memory Architectures}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[scale=0.5]{assets/figures/embedding.pdf}
+\caption{Each sentence is passed through a bi-directional GRU. We obtain word level embeddings $\phi(w_i)$ and sentence level embeddings $\psi(s_i)$ by concatinating the result of the front and back passes.}
+\label{fig:embed}
+\end{figure}
+
+\subsection{Bag-of-Sequences Memory} 
+\label{sec:hmemory}
+The context memory $M$ contains the dialog history $\{c_1^u, c_1^s, \ldots, c_{n-1}^u, c_{n-1}^s\}$ and the KB tuples $\{kb_1, \ldots, kb_{N}\}$. Each utterance in the dialog history and each KB tuple is placed in a memory cell as seen in Figure \ref{fig:hierMemory}. As utterances and tuples are inherently a sequence, we represent each memory cell $m_i$ as an ordered sequence of tokens $\langle w^1_i w^2_i \ldots w^{|m_i|}_i\rangle$. For an utterance, the word tokens are followed by a temporal indicator and a speaker indicator \{\$u (for user), \$s (for system)\}. For example, \{\texttt{good, morning, \#1, \$s}\}\ indicates this was the first utterance by the system. For a KB tuple, the tokens are sequenced as \{\textit{subject, predicate, object}\} followed by temporal indicator and a kb indicator (\texttt{\$db}).
+
+Token representation is generated using a bidirectional GRU. Let the outputs of the forward and backward GRUs for the token $w^j_i$ be denoted as $\overrightarrow{h^j_{i}}$ and $\overleftarrow{h^j_{i}}$ respectively. Then the token representation $\phi(w^j_i)$ is given by Eq. \ref{eqn:1}. Memory cell representation $\psi(m_i)$ is computed by concatenating the forward GRU output of its last token and the backward GRU output of its first token as in Eq. \ref{eqn:2}. This is further visualised in Figure \ref{fig:embed}
+\begin{eqnarray}
+\phi(w^j_i)=[\overrightarrow{h^j_{i}};\overleftarrow{h_{i}^j}] \label{eqn:1} \\
+\psi(m_i)=[\overrightarrow{h_{i}^{|m_i|}};\overleftarrow{h_{i}^1}] \label{eqn:2}
+\end{eqnarray}
+
 \begin{figure}[t]
 \centering
 \includegraphics[scale=0.4]{assets/paper_arch.png}
 \caption{The detailed encoder-decoder architecture of \sys\ depicting attention over its hierarchical memory and implementation of its copy mechanism.}
 \label{fig:fullsystem}
 \end{figure}
-
-\subsection{Bag-of-Sequences Memory} 
-\label{sec:hmemory}
-The context memory $M$ contains the dialog history $\{c_1^u, c_1^s, \ldots, c_{n-1}^u, c_{n-1}^s\}$ and the KB tuples $\{kb_1, \ldots, kb_{N}\}$. Each utterance in the dialog history and each KB tuple is placed in a memory cell. As utterances and tuples are inherently a sequence, we represent each memory cell $m_i$ as an ordered sequence of tokens $\langle w^1_i w^2_i \ldots w^{|m_i|}_i\rangle$. For an utterance, the word tokens are followed by a temporal indicator and a speaker indicator \{\$u (for user), \$s (for system)\}. For example, \{\texttt{good, morning, \#1, \$s}\}\ indicates this was the first utterance by the system. For a KB tuple, the tokens are sequenced as \{\textit{subject, predicate, object}\} followed by temporal indicator and a kb indicator (\texttt{\$db}).
-
-Token representation is generated using a bidirectional GRU. Let the outputs of the forward and backward GRUs for the token $w^j_i$ be denoted as $\overrightarrow{h^j_{i}}$ and $\overleftarrow{h^j_{i}}$ respectively. Then the token representation $\phi(w^j_i)$ is given by Eq. \ref{eqn:1}. Memory cell representation $\psi(m_i)$ is computed by concatenating the forward GRU output of its last token and the backward GRU output of its first token as in Eq. \ref{eqn:2}. 
-\begin{eqnarray}
-\phi(w^j_i)=[\overrightarrow{h^j_{i}};\overleftarrow{h_{i}^j}] \label{eqn:1} \\
-\psi(m_i)=[\overrightarrow{h_{i}^{|m_i|}};\overleftarrow{h_{i}^1}] \label{eqn:2}
-\end{eqnarray}
 
 %\textcolor{blue}{The encoder uses only the memory cell representations to summarize the dialog history and the KB, while the decoder peaks at both the memory cell representation and the token representations during each decode step.}\todo{[N: This is unclear]}
 
@@ -43,7 +66,7 @@ o &=& W_r \sum\nolimits_i p_i \psi(m_i) \\
 q_r &=& o + W_o q
 \end{eqnarray}
 
-where $W_r, W_o \in \mathbb{R}^{d \times d}$ are learnable parameters. The hop step can be re-iterated, by assigning the output of the previous hop as the new input query, i.e., setting $q=q_r$. The output of the encoder after $K$ hops, $q_r^k$, is assigned as the initial state of the \sys\ decoder.
+where $W_r, W_o \in \mathbb{R}^{d \times d}$ are learnable parameters. The hop step can be re-iterated, by assigning the output of the previous hop as the new input query, i.e., setting $q=q_r$. The output of the encoder after $K$ hops, $q_r^k$, is assigned as the initial state of the decoder.
 
 \subsection{The \sys\ Decoder}
 \label{ssec:decoder}
@@ -102,4 +125,7 @@ Our API Explorer then tries to find (explore) valid APIs/queries with a large ps
 
 \subsection{RL-decoder}
 \label{ssec:rldecode}
-
+The RL-decoder is added as a second decoder to the \sys\ architecture. It is activated when the system receives a {\em Make API} command. It uses a different embedding matrix from the original encoder to encode the context which serves as the initial state to the encoder. The decoder uses a sequence independence approach to generate the output akin to a slot-filling technique with a fixed template. This style of decoding mitigates the length bias problem associated with RL generation. The initial state is passed on at each timestep of the decode process and only the current timestep is given as input. This makes each decode step independent of the previously decoded sequence and it is completely focused on finding the correct information in the context to fill in its current slot/timestep.
+\begin{gather}
+s_{t} = (s,t)
+\end{gather}
