@@ -66,6 +66,8 @@ We show a sample of an Human Intelligence Task (HIT) on Amazon Mechanical Turk i
 We train \sys\ using an Adam optimizer \cite{kingma2014adam} and apply gradient clipping with a clip-value of 40. We identify hyper-parameters based on the evaluation of the held-out validation sets. We sample word embedding, hidden layer, and cell sizes from \{64, 128, 256\} and learning rates from \{10$^{-3}$, 5$\times$10$^{-4}$, 10$^{-4}$\}. The hyper-parameter $\gamma$ in the loss function is chosen between [0-1.5]. The Disentangle Label Dropout rate is sampled from \{0.1, 0.2\}. The number of hops for multi-hop attention in the encoder is sampled from \{1, 3, 6\}. 
 We list out the complete set of hyperparameters used to train \sys\ for the various datasets in Table \ref{tab:params}. 
 
+\vspace*{0.5in}
+
 \begin{table*}[ht]
 \centering
 \footnotesize

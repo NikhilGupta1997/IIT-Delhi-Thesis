@@ -1,32 +1,3 @@
-\section{Two-Level attention on BoSs Memory}
-\label{ssec:hierarattn}
-
-To visualize the benefit of two-level attention used on {\sc BoSs} memory by the decoder, we compare attention weights for two models: our proposed \emph{two-level attention} and a variant with just \emph{one-level attention} (over all the words in the memory). In the example of a sample dialog from bAbI Task 3, shown in Figure \ref{fig:attention}, the decoder is aimed at predicting the second best restaurant \textit{3 stars}, given that the restaurant with rating \textit{8 stars} has already been suggested and rejected. We show attention only on the KB entries for brevity.
-
-The models share some similarities in their distribution of attention. First, the attention weights are localized over the restaurant names, indicating the preference of the system to point to a specific restaurant. This is supported by the $g_s$ values, $3.14$ x $10^{-5}$ and $1.15$ x $10^{-4}$ for two-level attention and one-level attention respectively, i.e., both models prefer to copy rather than generate. Moreover, entries with the same restaurant name have similar attention weights, reflecting the robustness of the distribution.
-
-We also observe that two-level attention is able to perform the difficult task of {\em sorting} the restaurant entries based on decreasing order of rating (number of stars). It gives more weight to entries with a high rating 
-(\textit{3 stars} $>$ \textit{2 stars} $>$ \textit{1 star})
-and suppresses the weights of any previously suggested restaurant.
-%, e.g., \textit{8 stars}. 
-
-The attention over memory cells provides \sys\ with the ability to infer over multiple sets of tuples. The ability to sort the restaurants and reject a previously seen restaurant can be observed by the attention heat map of Memory cells. Attention over tokens on the other hand can push the attention weights towards either the subject or object in the KB tuple, based on the query's request. Thus using both in conjunction helps \sys\ perform significantly better than the baselines and illustrates the importance of the {\sc BoSs} memory in comparison to a flat memory layout.
-
-\begin{figure*}
-\centering
-\includegraphics[width=0.8\textwidth]{assets/task3_two_level.png}
-\caption{Visualization of attention weights on selected portions of memory in (a) \sys\ with two-level attention vs (b) \sys\ with one-level attention}
-\label{fig:attention}
-\end{figure*}
-
-\section{Example Predictions of \sys\ and Baselines}
-\label{sec:examples}
-Examples from SMD is shown in Table \ref{tab:smd0} respectively. Examples from KA test set with percentage of unseen entites set to 50 from CamRest and SMD are shown in Table \ref{tab:cam50} and Table \ref{tab:smd50} respectively. Examples from KA test set with percentage of unseen entites set to 100 from bAbI dialog Task 1 is shown in Table \ref{tab:t1_100}.
-
-\input{examples/task1_examples.tex}
-\input{examples/camrest_examples.tex}
-\input{examples/smd_examples.tex}
-
 \section{Dataset Preprocessing and Faults}
 \label{sec:preprocess}
 \subsection{Mem2Seq Preprocessing}
@@ -57,20 +28,10 @@ The pre-processing has major impact on the performance of  Mem2Seq, as it can on
 \label{sec:fault}
 The KB entities present in validation and non-OOV test sets for task 3 and 4 do not overlap with those in the train set. This effectively means that non-OOV and OOV test conditions are the same for tasks 3 and 4. This explains the low performance of baseline models on task 3 and 4 non-OOV test sets.
 
-\section{Multi-Hop vs 1-Hop Encoders}
-Table \ref{tab:ablationhop} shows the performance of bAbI tasks and CamRest on two \sys\ encoder settings. Multi-hops in encoder helps in bAbI task 3 and 5, as they require inferencing over the KB tuples (sorting restaurants by rating) to recommend a restaurant. We also see substantial improvements on CamRest in both BLEU and entity F1 metric.
+\section{Example Predictions of \sys\ and Baselines}
+\label{sec:examples}
+Examples from SMD is shown in Table \ref{tab:smd0} respectively. Examples from KA test set with percentage of unseen entites set to 50 from CamRest and SMD are shown in Table \ref{tab:cam50} and Table \ref{tab:smd50} respectively. Examples from KA test set with percentage of unseen entites set to 100 from bAbI dialog Task 1 is shown in Table \ref{tab:t1_100}.
 
-\begin{table*}
-\centering
-\footnotesize
-\begin{tabular}{l|ccccc|ccccc|cc}
-\toprule
-   & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks}} & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks (OOV)}}  & \multicolumn{2}{c}{\textbf{CamRest}} \\ \cmidrule{2-6} \cmidrule{7-11} \cmidrule{12-13}
-    & T1  & T2  & T3   & T4   & T5   & T1 & T2 & T3 & T4 & T5 & BLEU        & Ent. F1       \\ \midrule
-\sys\ with 1-Hop Encoder & 100 & 100 & 92.3 & 100 & 90.5 & 100 & 100 & 91.4 & 100 & 89 & 10.5 & 36.9 \\
-\sys\ with Multi-Hop Encoder & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    & 91.7   & 15.2        & 43.1    
-\\ \bottomrule
-\end{tabular}
-\caption{Ablation study: impact of hops in \sys\ encoder }
-\label{tab:ablationhop}
-\end{table*}
+\input{examples/task1_examples.tex}
+\input{examples/camrest_examples.tex}
+\input{examples/smd_examples.tex}
