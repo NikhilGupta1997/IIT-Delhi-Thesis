@@ -65,7 +65,8 @@ With this goal in mind we can broadly formulate two distinct problems as follows
 
 \noindent{\bf Problem 1} {\em Create an end-to-end dialog system that effectively disentangles the language and knowledge models.}
 
-The system must be capable to handle changes in the database which we will simulate using systematic adversarial attacks which mutates KB information. We will test the effectiveness of the system on three standard datasets used for task-oriented dialog -- bAbI \cite{BordesW16}, CamRest \cite{wenEMNLP2016}, and Stanford Multi-Domain Dataset \cite{Ericsigdial}. Of these, the last two are real-world datasets. We will evaluate the responses using standard metrics in the task-oriented setting.
+The system must be capable to handle changes in the database which we will simulate using systematic adversarial attacks which mutates KB information. We will test the effectiveness of the system on three standard datasets used for task-oriented dialog -- bAbI \cite{BordesW16}, CamRest \cite{wenEMNLP2016}, and Stanford Multi-Domain Dataset \cite{Ericsigdial}. Of these, the last two are real-world datasets. We show a sample dialog and its components in Figure \ref{sampledialog}.
+% We will evaluate the responses using standard metrics in the task-oriented setting.
 
 \noindent{\bf Problem 2} {\em Enable the end-to-end system to achieve comparable performance on datasets without explicit Knowledge Base API annotations.}
 
@@ -73,18 +74,11 @@ The mentions datasets will have to be augmented to remove the extra annotation d
 
 \begin{figure}
 \centering
-% \begin{subfigure}{\textwidth}
-%  \includegraphics[width=\linewidth]{assets/figures/dialog_system.png}
-%  \caption{Multi-Component Dialog System}\label{fig:systemfull}
-% \end{subfigure}
 
-% \vspace*{0.5in}
-
-% \begin{subfigure}{\textwidth}
  \includegraphics[width=\linewidth]{assets/figures/dialog_sample.png}
-%  \caption{End-to-end Dialog System}\label{fig:end2end}
-% \end{subfigure}
-\caption{Add a diagram of a sample diagram and explain what is an API, query and response}
+
+\caption{A breakdown of tasks in bAbI dialog. User queries are in green, system responses in blue, APIs in red along with their fetched KB results. Figure credits \cite{bordes2016learning}}
+\label{fig:sampledialog}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -26,7 +26,7 @@ This implies that Mem2Seq's copy mechanism  can only point to a specific KB tupl
 
 \begin{figure}[t]
 \centering
-\includegraphics[scale=0.9]{assets/figures/mem2seq.pdf}
+\includegraphics[scale=0.8]{assets/figures/mem2seq.pdf}
 \caption{(a) an example dialog with history and KB tuples. (b) an illustration of Mem2Seq memory. (c) an illustration of \sys\ memory}
 \label{fig:intro}
 \end{figure}
@@ -55,7 +55,7 @@ In contrast, \sys\ uses a hierarchical memory that can copy {\em any} word from 
 
 \section{Components Survey}
 
-\sys\ architecture has a {\em multi-hop encoder}, and a {\em pointer network} decoder with a {\em hierarchical attention} over the memory. We briefly survey these three strands of related research.
+\sys\ architecture has a {\em multi-hop encoder}, and a {\em pointer network} decoder with a {\em hierarchical attention} over the memory. The extended architecture has an {\em RL-based API decoder} with mixed on-policy and off-policy sampling. We briefly survey these strands of related research.
 
 \vspace{0.5ex}
 \noindent
@@ -77,12 +77,18 @@ Eric and Manning
 \noindent\textbf{Hierarchical Attention} was first introduced for document classification \cite{yang2016hierarchical}. Here, each document is represented as a set of sentences and each sentence as a set of words. For each sentence, an attention distribution is computed over words to identify informative words and compute a sentence representation. A similar approach identifies informative sentences to compute a document representation. Hierarchical attention has also been used for abstractive text summarization \cite{nallapati2016abstractive}.
 \sys\ similarly computes two attention distributions over different levels of the input. A word-level distribution over the words in each utterance and an utterance-level distribution over all the input utterances. This a function of these two distributions is used when copying a word in the decode process.
 
+\vspace{0.5ex}
+\noindent\textbf{Reinforcement Learning} has been coupled with Seq2Seq architechures to solve tasks like program induction \cite{liang2017neural, zaremba2015reinforcement}, SQL query generation \cite{NIPS2018_8204, zhong2017seq2sql}, and dialog generation \cite{li2016deep}. These systems generate output responses which are associated with a final reward. The REINFORCE \cite{williams1992simple} algorithm is used to train such systems from weak supervision and directly maximize the expected reward. Since learning from scratch is difficult for REINFORCE, it is augmented with an iterative maximum likelihood (ML) training process \cite{liang2017neural}. Memory Augmented Policy Optimization (MAPO) \cite{NIPS2018_8204}, leverages a memory buffer of promising trajectories to reduce the variance of policy gradient estimate. It uses distributed sampling from inside and outside of the memory buffer to scale up  training.
+
+\sys -RL leverages these techniques to generate a valid API call to the Knowledge Base. However, it differs from the other methods as the decoder has to train using implicit reward which depends on the final system responses based on the KB results queried by the predicted API.
+
 \section{Preliminaries}
 \label{sec:prelims}
 In this section, we briefly describe the preliminaries over which the proposed \sys\ architecture is built upon as explained in the previous section. This includes (1) the multi-hop encoder in MN and (2) a standard sequence decoder with attention \cite{bahdanau2014neural}
 
 \noindent\textbf{Multi-Hop Encoder in MN}
 \label{ssec:mhencoder}
+
 The multi-hop encoder as described in end-to-end memory network \cite{sukhbaatar2015end} takes as input a query $q \in \mathbb{R}^{d}$ and a memory $M = \{ m_i; m_i \in \mathbb{R}^{d}\}$ and generates a reduced query $q_r \in \mathbb{R}^{d}$. Here $d$ is the embedding dimension. Augmenting the query by attending it over the memory elements, to capture relevant information necessary to generate the response, is referred to as a \textit{hop}. A single hop reduced query is computed as follows:
 \begin{eqnarray}
 p_i &=& \text{softmax}(q^T m_i) \\
@@ -93,6 +99,7 @@ where $W_r \in \mathbb{R}^{d \times d}$. The hop step can be re-iterated, by ass
 
 \noindent\textbf{Sequence Decoder with Attention}
 \label{ssec:rnndecoder}
+
 The sequence decoder predicts the token $y_t$ in the output sequence $\langle y_1  y_2  \ldots  y_T \rangle$, given the decoder state at time $t$, $s_t$, and a set of input contexts $Z=\{z_i ; z_i \in \mathbb{R}^{d}\}$. For simplicity, we denote this conditional distribution of generating the next word as just $P_g(y_t)$. To compute $P_g(y_t)$, first an attention distribution $\alpha^t$ is computed over the input contexts $z_i$ using Loung attention \cite{luong2015effective}. 
 \begin{gather}
 u_i^t = s_t W_l z_i \\
@@ -118,3 +125,23 @@ During training, the objective is to minimize the average negative log-likelihoo
 \end{gather}
 \end{comment}
 The total loss is computed by adding the loss of all the responses in the training data.
+
+\noindent\textbf{Augmented REINFORCE}
+\label{ssec:Areinforce}
+
+Lets consider the setting where given a query $x$, the state, action and reward at each time step $t \in {0, 1, \dots, T }$ are ($s_t$, $a_t$, $r_t$). In a deterministic environment the state is defined by the query $x$ and the action sequence: $s_t = (x, a_{0:t-1})$, where $a_{0:t-1} = (a_0, \dots, a_{t-1})$ is the history of actions at time $t$. If the reward at time $t$ is given by $r_t$, then the cumulative reward of a action sequence $a_{0:T}$ is defined as:
+\begin{gather}
+R(x, a_{0:T}) = \sum_{t}r_t
+\end{gather}
+The agent’s decision making procedure at each time is defined by a deterministic policy, $\pi_\theta(s,a) = P_\theta(a_t = a|x, a_{0:t-1})$, where $\theta$ are the model parameters. The probability of generating a sequence $a_{0:T}$ is:
+\begin{gather}
+P_\theta(a_{0:T}|x) = \prod_{t}P_\theta(a_t|x, a_{0:t-1})
+\end{gather}
+We can define our objective to be the expected cumulative reward and use policy gradient methods such as REINFORCE for training. The objective and gradient are:
+\begin{gather}
+J^{RL}(\theta) = \sum_{x}\mathbb{E}_{P_\theta(a_{0:T}|x)}[R(x, a_{0:T})] \\
+\nabla_\theta J^{RL}(\theta) = \sum_{x}\sum_{a_{0:T}}P_\theta(a_{0:T}|x)\cdot[R(x, a_{0:T}) - B(x)]\cdot\nabla_\theta \log P_\theta(a_{0:T}|x)
+\end{gather}
+where $B(x) = \sum\nolimits_{a_{0:T}} P_\theta(a_{0:T} | x)R(x, a_{0:T})$ is a baseline that reduces the variance of the gradient estimation without introducing bias.
+
+Following a similiar pattern to imitaion learning \cite{ross2011reduction, berant2015imitation} we can calculate a $a^{best}_{0:T}$ based on maximum likelihood and add them to the set of action sequences with a resonably large probability. We define a parameter $\alpha$ and with each iteration, we scale the probabilities of the on-policy action sequences by $(1 - \alpha)$ and then add the calculated $a^{best}_{0:T}$ with a probablity $\alpha$. This augmented REINFORCE leads to faster convergence and stabilises training.
