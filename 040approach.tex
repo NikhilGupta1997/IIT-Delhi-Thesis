@@ -85,7 +85,12 @@ P_c(y_t=w)=\sum_{ij:w_i^j=w} \beta_{ij}^{t}
 %\textcolor{blue}{where $W^w_l, W^u_l \in \mathbb{R}^{d \times d}$ are learnable parameters.}
 %\todo{[N: I think we dont use the weight matricies for attention due to extra parameters and low performance.]}
 
-The copy and generate distributions are combined using a soft gate $g_s^t \in [0,1]$ as in \cite{see2017get}. $g_s^t$ is a function of the decoder state at time $t$ and the previous decoded word.
+The copy and generate distributions are combined using a soft gate $g_s^t \in [0,1]$ as in \cite{see2017get}. $g_s^t$ is a function of the decoder state at time $t$ and the previous decoded word $y_{t-1}$.
+\begin{gather}
+g_s^t = W_g[s_t;y_{t-1}] + b \\
+P(y_t) = g_s^{t}P_g(y_t) + (1-g_s^{t})P_c(y_t)
+\end{gather}
+
 
 \subsection{Loss}
 The decoder is trained using cross-entropy loss. The loss per response is defined as:
@@ -108,7 +113,7 @@ We randomly drop some words with disentangle label set to $1$. This \textit{Dise
 The relative weight of $\mathcal{L}_{d}$ in the overall loss is controlled using a hyper-parameter ($\gamma$). The dropout rate is also a hyper-parameter.
 
 \section{The \sys -RL Architecture}
-The reinforment learning based API generation system builds upon the original \sys\ architecture with added modules (1) API Explorer, (2) RL-decoder, (3) Augmented REINFORCE. We explain these in the following sections.
+The reinforment learning based API generation system builds upon the original \sys\ architecture with the following modules: (1) API Explorer, (2) RL-decoder, and (3) Augmented REINFORCE. We explain these in the upcoming sections.
 
 \subsection{API Explorer}
 This module has the objective of aiding the exploration of valid APIs with a strong reward. Our actual reward for a generated API is implicit, because it depends on the responses of the response model based on the results queried by the API. Hence, we go on to define a psuedo reward for each API as the following:
@@ -125,7 +130,9 @@ Our API Explorer then tries to find (explore) valid APIs/queries with a large ps
 
 \subsection{RL-decoder}
 \label{ssec:rldecode}
-The RL-decoder is added as a second decoder to the \sys\ architecture, and is only activated when the system receives a {\em Make API} command. It uses a different embedding matrix from the original encoder to encode the context which serves as the initial state to the encoder. The decoder uses a sequence independence approach to generate the output akin to a slot-filling technique with a fixed template as shown in Figure \ref{fig:rldec}. This style of decoding mitigates the length bias problem associated with RL generation. The initial state is passed on at each timestep of the decode process and only the current timestep is given as input, as in Eq. \ref{eqn:dec}. This makes each decode step independent of the previously decoded sequence and it is completely focused on finding the correct information in the context to fill in its current slot/timestep. The decoder is implemented using beam-search and employs constraint decoding over a fixed grammar.
+The RL-decoder is added as a second decoder to the \sys\ architecture, and is only activated when the system receives a {\em Make API} command. It uses a different embedding matrix from the original encoder to encode the context which serves as the initial state to the decoder. The decoder uses a sequence independence approach to generate the output akin to a slot-filling technique with a fixed template as shown in Figure \ref{fig:rldec}. Since the API has been templatised it will always generate the same length trajectory and hence it mitigates the length bias issue. Also since each slot is being predicted independent of each other, the decoder will attempt to pick up as much informatiom as possible each time. This will mitigate the data bias issue which arises from the ability to choose what parameters to send in the API call, whereas we generally want to be as precisise as possible.
+
+The initial state is passed on at each timestep of the decode process and only the current timestep is given as input, as in Eq. \ref{eqn:dec}. This makes each decode step independent of the previously decoded sequence and it is completely focused on finding the correct information in the context to fill in its current slot/timestep. The decoder is implemented using beam-search and employs constraint decoding over a fixed grammar/template.
 \begin{eqnarray}
 s_{t} = W_d [s;p_t] + b \label{eqn:dec}
 \end{eqnarray}
@@ -134,38 +141,39 @@ where $s$ is the initital state to the decoder and $p_t$ is the position embeddi
 \begin{figure}[!t]
 \centering
 \includegraphics[scale=1.1]{assets/figures/rl_decoder.pdf}
-\caption{Each sentence is passed through a bi-directional GRU. We obtain word level embeddings $\phi(w_i)$ and sentence level embeddings $\psi(s_i)$ by concatinating the result of the front and back passes.}
+\caption{The decoder attempts to fill a predefined template of fixed length. It uses only the encoded state and current position $p_t$ to decode to maintain independence between slots.}
 \label{fig:rldec}
 \end{figure}
 
 \subsection{Augmented REINFORCE}
-At each iteration our RL-decoder creates several on-policy predictions using beam search decoding. Each one has its own associated probability and is assigned a psuedo-reward. We also maintain a buffer of size $M$ containing the set of promising APIs, denoted by $\mathcal{B} = \bigl\{a^{(i)}\bigr\}_{i=1}^M$, where $a \in \mathcal{A}$ is a valid API trajectory in our entire space of possible trajectories $\mathcal{A}$. We modify our expected objective of our policy $\pi_\theta$, as done in \cite{NIPS2018_8204}, as a weighted sum of two terms: an expectation over the trajectories inside the memory buffer, and a separate expectation over the trajectories outside the buffer.
+% At each iteration our RL-decoder creates several on-policy predictions using beam search decoding. Each one has its own associated probability and is assigned a psuedo-reward. 
+The API explorer maintains a buffer of size $M$ containing the set of promising APIs, denoted by $\mathcal{B} = \bigl\{a^{(i)}\bigr\}_{i=1}^M$, where $a \in \mathcal{A}$ is a valid API trajectory in our entire space of possible trajectories $\mathcal{A}$. We modify our expected objective of our policy $\pi_\theta$, as done in \cite{NIPS2018_8204}, as a weighted sum of two terms: an expectation over the trajectories inside the memory buffer, and a separate expectation over the trajectories outside the buffer.
 
-\begin{eqnarray}
+\begin{gather}
 J^{RL}(\theta) = \alpha\sum_{a\in\mathcal{B}}\pi^+_\theta(a)R(a) + (1-\alpha)\sum_{a\in(\mathcal{A}-\mathcal{B})}\pi^-_\theta(a)R(a) 
-\end{eqnarray}
+\end{gather}
 
 here $\pi^+_\theta$ and $\pi^-_\theta$ denote the normalised probablity in and outside the buffer respectively.
 
-\begin{eqnarray*}
+\begin{gather}
 \pi^+_\theta(a) = \begin{cases}
              \pi_\theta(a) / \alpha  & \text{if } a \in \mathcal{B} \\
              0  & \text{if } a \notin \mathcal{B}
        \end{cases}, \quad
-g(x) = \begin{cases}
+\pi^-_\theta(a) = \begin{cases}
              0  & \text{if } a \in \mathcal{B} \\
              \pi_\theta(a) / (1-\alpha)  & \text{if } a \notin \mathcal{B}
        \end{cases}
-\end{eqnarray*}
+\end{gather}
 
-The first term of the expectation can be calculated over the entire buffer which is typically small in size. The second expection requires us to sample from $\pi_\theta$, which is done via our rl-decoder, and then employing rejection sampling w.r.t the examples in the buffer. This will ensure that the buffer and our on-policy samples are mutually exculsive.
+The first term of the expectation can be calculated over the entire buffer which is typically small in size. The second expection requires us to sample from $\pi_\theta$, using beam search over our RL-decoder, and then employing rejection sampling w.r.t the examples in the buffer. This will ensure that the buffer and our on-policy samples are mutually exculsive. The entire pipeline is visualised in Figure \ref{fig:rlupdate}.
 
-\noindent\textbf{Dealing with Data Bias}
-We noticed that in our datasets some examples have a bias in the KB and multiple APIs might be able to retrieve the same set of results. This makes it hard to generalise our policy and we refer to this issue as data-bias, distinctly different from the well-known exposure bias which would apply over the dialogs themselves and not the KB. We attempt to mitigate this issue by dividing our dialogs into two sets: (1) confident and (2) confused. The confident examples are the dialogs not effected by the data-bias and it is clear what the best API is. Confused dialogs on the other hand have multiple APIs giving the best set of results. 
+\noindent\textbf{Dealing with Language Bias}
+Several default inputs such as {\em dontcare} or {\em null} occur very frequenntly in valid APIs. As a result the policy is biased to pick them on occasion. We attempt to mitigate this issue by dividing our dialogs into two sets: (1) confident and (2) confused. The confident examples are the dialogs with no null slots. Confused dialogs on the other hand have one or more null slots and hence multiple APIs giving the best set of results. The confident examples are trained in a similar setting to supervised learning by keeping only the one best API in the buffer. This leads to a robust system and it helps bias it to learn the confused examples correctly.
 
-\begin{figure}[!t]
+\begin{figure}
 \centering
-\includegraphics[scale=1.1]{assets/figures/rl_update.pdf}
-\caption{Each sentence is passed through a bi-directional GRU. We obtain word level embeddings $\phi(w_i)$ and sentence level embeddings $\psi(s_i)$ by concatinating the result of the front and back passes.}
-\label{fig:embed}
+\includegraphics[scale=1.0]{assets/figures/rl_update.pdf}
+\caption{The policy update algorithm. A mix of on and off-policy samples are used to train the policy and any new promising trajectories are added to the buffer.}
+\label{fig:rlupdate}
 \end{figure}
