@@ -99,7 +99,7 @@ Figures \ref{label-a} and \ref{label-b} show the per-response accuracies of the 
 
 \begin{table}[!t]
 \centering
-\scriptsize
+% \scriptsize
 \begin{tabular}{c|l}
 \toprule
 %\textbf{kb} & \textit{da\_vinci\_pizzeria}\\
@@ -145,6 +145,86 @@ SMD consists of dialogs with a large KB and a highly varying response pattern. T
 
 \noindent \textbf{Human Evaluation:}
 We summarize the human evaluation results for real-world datasets on the 50\% unseen KA test set in Table \ref{tab:amt_dis}. \sys\ again outperforms the baselines and is labeled \emph{successful} twice more often than the next best model on both Camrest and SMD. Seq2Seq appears to produce better sentence structures on the SMD dataset, primarily because it does not attempt to learn inference on the KB, allowing it to solely focus on learning the language model better. 
+
+\begin{figure}[!t]
+\vspace*{0.5in}
+
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task1_Acc.png}
+ \caption{Multi-Component Dialog System}\label{fig:systemfull}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task1_F1.png}
+ \caption{End-to-end Dialog System}\label{fig:end2end}
+\end{subfigure}
+
+\caption{Task 1}
+\vspace*{0.5in}
+
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task5_Acc.png}
+ \caption{Multi-Component Dialog System}\label{fig:systemfull}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task5_F1.png}
+ \caption{End-to-end Dialog System}\label{fig:end2end}
+\end{subfigure}
+
+\caption{Task 5}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/camrest_BLEU.png}
+ \caption{Multi-Component Dialog System}\label{fig:systemfull}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/camrest_F1.png}
+ \caption{End-to-end Dialog System}\label{fig:end2end}
+\end{subfigure}
+
+\caption{CamRest}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/smd_BLEU.png}
+ \caption{Multi-Component Dialog System}\label{fig:systemfull}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/smd_F1.png}
+ \caption{End-to-end Dialog System}\label{fig:end2end}
+\end{subfigure}
+
+\caption{SMD}
+\end{figure}
+
+\clearpage
 
 \begin{table}[t]
 \centering
@@ -208,52 +288,70 @@ Mem2Seq & 35 & 2.06 & 26 & 1.9 \\
 % \label{tab:amtg}
 % \end{table}
 
-\begin{figure*}
-\centering
-\begin{minipage}[b]{.475\textwidth}
-\includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/task1_Acc.png}
-\caption{bAbI Task 1: Per-response accuracy comparison on KA sets}\label{label-a}
-\end{minipage}\qquad
-\begin{minipage}[b]{.475\textwidth}
- \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/task5_Acc.png}
-        \caption{bAbI Task 5: Per-response accuracy comparison on KA sets}\label{label-b}
-\end{minipage}
-\end{figure*}
+% \begin{figure*}
+% \centering
+% \begin{minipage}[b]{.475\textwidth}
+% \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/task1_Acc.png}
+% \caption{bAbI Task 1: Per-response accuracy comparison on KA sets}\label{label-a}
+% \end{minipage}\qquad
+% \begin{minipage}[b]{.475\textwidth}
+%  \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/task5_Acc.png}
+%         \caption{bAbI Task 5: Per-response accuracy comparison on KA sets}\label{label-b}
+% \end{minipage}
+% \end{figure*}
 
-\begin{figure*}
-\centering
-\begin{minipage}[b]{.475\textwidth}
-\includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/camrest_F1.png}
-\caption{CamRest: Entity F1 comparison on KA sets}\label{label-c}
-\end{minipage}\qquad
-\begin{minipage}[b]{.475\textwidth}
- \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/smd_F1.png}
-\caption{SMD: Entity F1 comparison on KA sets}\label{label-d}
-\end{minipage}
-\end{figure*}
+% \begin{figure*}
+% \centering
+% \begin{minipage}[b]{.475\textwidth}
+% \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/camrest_F1.png}
+% \caption{CamRest: Entity F1 comparison on KA sets}\label{label-c}
+% \end{minipage}\qquad
+% \begin{minipage}[b]{.475\textwidth}
+%  \includegraphics[width=\textwidth, height=4.7cm]{assets/graphs/smd_F1.png}
+% \caption{SMD: Entity F1 comparison on KA sets}\label{label-d}
+% \end{minipage}
+% \end{figure*}
 
 \subsection{Ablation Study}
 \label{sec:expt3}
 
-\begin{table*}[!ht]
-\centering
-\footnotesize
-% \vspace{2mm}
-\begin{tabular}{l|ccccc|ccccc|cc}
-\toprule
-   & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks}} & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks (OOV)}}  & \multicolumn{2}{c}{\textbf{CamRest}} \\ \cmidrule{2-6} \cmidrule{7-11} \cmidrule{12-13}
-    & T1  & T2  & T3   & T4   & T5   & T1 & T2 & T3 & T4 & T5 & BLEU        & Ent. F1       \\ \midrule
-\sys\ w/o {\sc BoSs} Memory & 100 & 100 & 74.9 & 57.2 & 95.6 & 93.5   & 78.9   & 74.9   & 57     & 81.4   & 10.13        & 29          \\
-\sys\ w/o $\mathcal{L}_{d}$          & 100 & 100 & 91.7 & 100  & 94.3 & 83.2   & 78.9   & 92.7   & 100    & 66.7   & 15.5        & 40.1          \\
-\sys\  w/o DLD     & 100 & 100 & 93.4 & 100  & 95.3 & 79.2   & 84.6   & 90.7   & 100    & 78.1   & 12.4        & 40.45         \\ \midrule
-\sys\                 & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    & 91.7   & 15.2        & 43.1    
-\\ \bottomrule
-\end{tabular}
-\caption{Ablation study: impact of each model element on \sys\ }
-\label{tab:ablation}
-\end{table*}
+% \begin{table*}[!ht]
+% \centering
+% \footnotesize
+% % \vspace{2mm}
+% \begin{tabular}{l|ccccc|ccccc|cc}
+% \toprule
+%    & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks}} & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks (OOV)}}  & \multicolumn{2}{c}{\textbf{CamRest}} \\ \cmidrule{2-6} \cmidrule{7-11} \cmidrule{12-13}
+%     & T1  & T2  & T3   & T4   & T5   & T1 & T2 & T3 & T4 & T5 & BLEU        & Ent. F1       \\ \midrule
+% \sys\ w/o {\sc BoSs} Memory & 100 & 100 & 74.9 & 57.2 & 95.6 & 93.5   & 78.9   & 74.9   & 57     & 81.4   & 10.13        & 29          \\
+% \sys\ w/o $\mathcal{L}_{d}$          & 100 & 100 & 91.7 & 100  & 94.3 & 83.2   & 78.9   & 92.7   & 100    & 66.7   & 15.5        & 40.1          \\
+% \sys\  w/o DLD     & 100 & 100 & 93.4 & 100  & 95.3 & 79.2   & 84.6   & 90.7   & 100    & 78.1   & 12.4        & 40.45         \\ \midrule
+% \sys\                 & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    & 91.7   & 15.2        & 43.1    
+% \\ \bottomrule
+% \end{tabular}
+% \caption{Ablation study: impact of each model element on \sys\ }
+% \label{tab:ablation}
+% \end{table*}
+We assess the value of each model element, by removing it from \sys. Table \ref{tab:ablation} reports the per-response accuracy scores for various configurations of \sys\ on bAbI dialog tasks. It also reports the BLEU and entity F1 metric of various configurations on CamRest.
 
-\begin{table*}[!ht]
+\noindent \textbf{Without BoSs Memory:} 
+This configuration uses the Bag-of-Bags (BoB) Memory rather than {\sc BoSs} memory. The BoB memory is a simplified representation, similar to the one in the original Memory Networks. Here the token representation is the vector embedding of the token with no influence from the surrounding words and the memory cell representation is the sum of all its token embeddings. As a result, each word $w$ representation is influenced equally by all words in a memory cell, irrespective of its distance from $w$. This makes capturing context in the immediate neighbourhood harder. Inability to capture the correct context prevents the configuartion from generalizing to OOV test sets.
+
+\noindent \textbf{Without Disentangled Loss:} Disentangled Loss ($\mathcal{L}_{d}$) plays an important role in enforcing that KB words be copied and other language be generated. By removing this loss component, 
+%the system will not enforce copying only KB words in the response. When compared with \sys, 
+it achieves better BLEU score in CamRest, but with a drop in Entity F1. Without the disentangled loss, the model sometimes learns to generate KB words. This severely affects OOV performance. As described earlier, an error in bAbI dataset construction tasks 3 and 4 effectively injects the validation set with a lot of OOVs. This anomaly in conjunction with the dropout (DLD), helps the configuration in achieving an acceptable performance for those tasks.
+
+\noindent \textbf{Without Disentangled Label Dropout:} 
+\sys\ learns to generate language and copy KB words. Without DLD, the model learns to memorize words to be copied rather than learning the context under which a word should be copied. Hence, the performance on OOV test sets is much inferior compared to the non-OOV setting.
+
+Overall, we notice that combining all three model elements is necessary in obtaining the best performance across all tasks.
+
+\vspace{1cm}
+
+\noindent \textbf{Multi-Hop vs 1-Hop Encoders:}
+Table \ref{tab:ablationhop} shows the performance of bAbI tasks and CamRest on two \sys\ encoder settings. Multi-hops in encoder helps in bAbI task 3 and 5, as they require inferencing over the KB tuples (sorting restaurants by rating) to recommend a restaurant. We also see substantial improvements on CamRest in both BLEU and entity F1 metric.
+
+\begin{table}
 \centering
 \footnotesize
 % \vspace{2mm}
@@ -269,26 +367,9 @@ Mem2Seq & 35 & 2.06 & 26 & 1.9 \\
 \end{tabular}
 \caption{Ablation study: impact of each model element on \sys\ }
 \label{tab:ablation}
-\end{table*}
+\end{table}
 
-We assess the value of each model element, by removing it from \sys. Table \ref{tab:ablation} reports the per-response accuracy scores for various configurations of \sys\ on bAbI dialog tasks. It also reports the BLEU and entity F1 metric of various configurations on CamRest.
-
-\noindent \textbf{Without BoSs Memory:} 
-This configuration uses the Bag-of-Bags (BoB) Memory rather than {\sc BoSs} memory. The BoB memory is a simplified representation, similar to the one in the original Memory Networks. Here the token representation is the vector embedding of the token with no influence from the surrounding words and the memory cell representation is the sum of all its token embeddings. As a result, each word $w$ representation is influenced equally by all words in a memory cell, irrespective of its distance from $w$. This makes capturing context in the immediate neighbourhood harder. Inability to capture the correct context prevents the configuartion from generalizing to OOV test sets.
-
-\noindent \textbf{Without Disentangled Loss:} Disentangled Loss ($\mathcal{L}_{d}$) plays an important role in enforcing that KB words be copied and other language be generated. By removing this loss component, 
-%the system will not enforce copying only KB words in the response. When compared with \sys, 
-it achieves better BLEU score in CamRest, but with a drop in Entity F1. Without the disentangled loss, the model sometimes learns to generate KB words. This severely affects OOV performance. As described earlier, an error in bAbI dataset construction tasks 3 and 4 effectively injects the validation set with a lot of OOVs. This anomaly in conjunction with the dropout (DLD), helps the configuration in achieving an acceptable performance for those tasks.
-
-\noindent \textbf{Without Disentangled Label Dropout:} 
-\sys\ learns to generate language and copy KB words. Without DLD, the model learns to memorize words to be copied rather than learning the context under which a word should be copied. Hence, the performance on OOV test sets is much inferior compared to the non-OOV setting.
-
-Overall, we notice that combining all three model elements is necessary in obtaining the best performance across all tasks.
-
-\noindent \textbf{Multi-Hop vs 1-Hop Encoders:}
-Table \ref{tab:ablationhop} shows the performance of bAbI tasks and CamRest on two \sys\ encoder settings. Multi-hops in encoder helps in bAbI task 3 and 5, as they require inferencing over the KB tuples (sorting restaurants by rating) to recommend a restaurant. We also see substantial improvements on CamRest in both BLEU and entity F1 metric.
-
-\begin{table*}
+\begin{table}
 \centering
 \footnotesize
 \begin{tabular}{l|ccccc|ccccc|cc}
@@ -301,11 +382,11 @@ Multi-Hop  & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    
 \end{tabular}
 \caption{Ablation study: impact of hops in \sys\ encoder }
 \label{tab:ablationhop}
-\end{table*}
+\end{table}
 
 %We finally see that, the OOV performance is as comparable to the non-OOV performance when all the elements of \sys\ are combined together.
 
-\begin{table}[h]
+\begin{table}[!h]
 \centering
 \small
 \begin{tabular}{c|p{13cm}}
@@ -387,6 +468,7 @@ Table \ref{tab:camrest-qualeval}, demonstrates the ability of \sys\ to copy enti
 
 Table \ref{tab:task5-qualeval} contains only unseen entities. This example highlights the shortcomings of the Seq2Seq model as it ends up predicting a restaurant encountered during training. Mem2Seq copies a restaurant name without learning to sort the restaurants based on rating. \sys, with its efficient memory addressing, is seen to be able to solve both issues.
 
+\clearpage
 
 \subsection{Visual Evaluation}
 \label{ssec:hierarattn}

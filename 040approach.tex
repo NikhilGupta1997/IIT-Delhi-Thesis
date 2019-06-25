@@ -108,7 +108,7 @@ We randomly drop some words with disentangle label set to $1$. This \textit{Dise
 The relative weight of $\mathcal{L}_{d}$ in the overall loss is controlled using a hyper-parameter ($\gamma$). The dropout rate is also a hyper-parameter.
 
 \section{The \sys -RL Architecture}
-The reinforment learning based API generation system builds upon the original \sys\ architecture with added modules (1) API Explorer and (2) RL-decoder. We explain these in the following sections.
+The reinforment learning based API generation system builds upon the original \sys\ architecture with added modules (1) API Explorer, (2) RL-decoder, (3) Augmented REINFORCE. We explain these in the following sections.
 
 \subsection{API Explorer}
 This module has the objective of aiding the exploration of valid APIs with a strong reward. Our actual reward for a generated API is implicit, because it depends on the responses of the response model based on the results queried by the API. Hence, we go on to define a psuedo reward for each API as the following:
@@ -125,7 +125,11 @@ Our API Explorer then tries to find (explore) valid APIs/queries with a large ps
 
 \subsection{RL-decoder}
 \label{ssec:rldecode}
-The RL-decoder is added as a second decoder to the \sys\ architecture. It is activated when the system receives a {\em Make API} command. It uses a different embedding matrix from the original encoder to encode the context which serves as the initial state to the encoder. The decoder uses a sequence independence approach to generate the output akin to a slot-filling technique with a fixed template. This style of decoding mitigates the length bias problem associated with RL generation. The initial state is passed on at each timestep of the decode process and only the current timestep is given as input. This makes each decode step independent of the previously decoded sequence and it is completely focused on finding the correct information in the context to fill in its current slot/timestep.
+The RL-decoder is added as a second decoder to the \sys\ architecture, and is only activated when the system receives a {\em Make API} command. It uses a different embedding matrix from the original encoder to encode the context which serves as the initial state to the encoder. The decoder uses a sequence independence approach to generate the output akin to a slot-filling technique with a fixed template. This style of decoding mitigates the length bias problem associated with RL generation. The initial state is passed on at each timestep of the decode process and only the current timestep is given as input. This makes each decode step independent of the previously decoded sequence and it is completely focused on finding the correct information in the context to fill in its current slot/timestep.
 \begin{gather}
-s_{t} = (s,t)
+s_{t} = W_d [s;p_t] + b
 \end{gather}
+where $s$ is the initital state to the decoder and $p_t$ is the position embedding for the current time step.
+
+\subsection{Augmented REINFORCE}
+At each iteration our RL-decoder creates several on-policy predictions using beam search decoding. Each one has its own associated probability and is assigned a psuedo-reward. We similarly 
