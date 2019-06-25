@@ -98,7 +98,7 @@ Most datasets used in open domain dialog systems are obtained using Automatic Sp
 
 \noindent \textbf{Limitations of state-of-the-art task-oriented approaches}
 
-There has been very little progress made end-to-end task-oriented dialogs, as most of the proposed approaches has been around using hand crafted rules to either build the entire system, or to define the structured space of each sub-components output. The only work published so far on end-to-end task-oriented conversation has the following limitations:
+There has been very little progress made end-to-end task-oriented dialogs, as most of the proposed approaches has been around using hand crafted rules to either build the entire system, or to define the structured space of each sub-components output. The works published so far on end-to-end task-oriented conversation have the following limitations:
 \begin{enumerate}
 \item Both the human and the agent utterances in the dataset are fabricated using rules. This simulated dataset is very simple compared to human to human conversation logs.
 \item The learned model is unable to generalise over a Knowledge Base and performance suffers greatly whenever KB modifications are made. It has no support for field values that have never been encountered so far (OOVs).
@@ -113,11 +113,11 @@ Simple policy gradient methods like REINFORCE \cite{williams1992simple} use Mont
 
 But MAPO suffers from three main disadvantages:
 
-\noindent\textbf{Length Bias} is the phonomenon of a policy to favor a shorter trajectory as compared to a longer one for equal or even lesser rewards. This makes it hard to train the policy for longer and more complex queries.
+\noindent\textbf{Length Bias} is the phonomenon of a policy to favor a shorter trajectory as compared to a longer one with equal or even greater rewards. This makes it hard to train the policy for longer and more complex queries.
 
 \noindent\textbf{Data Bias} is an intrinsic property of the knowledge base on the data it contains. It refers to the situation when multiple APIs retrieve the same set of results from the KB for some inputs and behave very differently for a differnt set of inputs. This confuses the policy which is not able to learn the proper behavior of the API.
 
-\noindent\textbf{Language Bias} is the due to the frequennt occurance of some inputs to the API which biases the policy to predict them. For example, {\em dontcare}, or null, is seen very often in the dataset as it is the default.
+\noindent\textbf{Language Bias} is the due to the frequennt occurance of some inputs to the API which biases the policy to predict them. For example, {\em dontcare}, or null, is seen very often in the dataset as it is the default input. The policy would favor prediciting such null inputs even if they result to a low reward.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Contributions
@@ -132,7 +132,9 @@ Third, we augment the standard cross-entropy loss used in dialog systems with an
 
 We find that \sys\ is competitive or significantly better on standard metrics in all datasets as compared to state-of-the-art baselines. We also introduce {\em adversarial attacks} in which we systematically increase the percentage of previously unseen entities in the KB. We summarise these attacks as our {\em knowledge adaptability} (KA) evaluation. We find that \sys\ is highly robust across all percentage levels in all the standard metrics. We also report a human-based evaluation and find that \sys\ responses are frequently rated higher than other baselines.
 
-To address the second problem statement, we extend \sys\ and add a novel RL-decoder which generates the required API call at a fixed turn of the dialog. We train the system using a buffer containing valid API calls and do a mix of off-policy and on-policy sampling. We use a pseudo-reward for learning which is computed using a combination of precision and recall on the retrieved results and the gold system response KB entities. Our extended architecture which we term as \sys -RL was successfully able to achieve similar accuracies to the original \sys\ model trained on the fully annotated dataset.
+To address the second problem statement, we extend \sys\ and add a novel RL-decoder which generates the required API call at a fixed turn of the dialog. We train the system using a buffer containing valid API calls and do a mix of off-policy and on-policy sampling. We use a pseudo-reward for learning which is computed using a combination of precision and recall on the retrieved results and the gold system response KB entities. Our extended architecture which we term as \sys -RL was successfully able to achieve similar accuracies to the original \sys\ model trained on the fully annotated dataset. \\
+
+\pagebreak
 
 Overall, our contributions are:
 
