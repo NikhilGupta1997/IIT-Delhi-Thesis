@@ -22,7 +22,33 @@ Our experiments evaluate three research questions.
 \subsection{Performance Study}
 \label{sec:expt2}
 
-Table \ref{tab:babi} reports the per-response and per-dialog (in parentheses) accuracies on the bAbI dialog tasks.
+\begin{table*}[ht]
+\centering
+\footnotesize
+\begin{tabular}{c|cccc|c}
+\toprule
+&  \multicolumn{4}{c}{\textbf{Generative Models}}  \\
+\cmidrule{2-6}
+\textbf{Task} & \textbf{Mem2Seq*} & \textbf{Seq2Seq} & \textbf{Seq2Seq+Copy} & \textbf{Mem2Seq} & \textbf{ \sys\ }  \\
+\midrule
+T1 & 100 (100) & 100 (100) & 100 (100) & 100 (100) & 100 (100) \\
+T2 & 100 (100) &  100 (100) &  100 (100) & 100 (100) & 100 (100) \\
+T3 & 94.7 (62.1) & 74.8 (0) & 85.1 (19.0)& 74.9 (0) & \textbf{95.2 (63.8)}    \\
+T4 & 100 (100) & 57.2 (0) & 100 (100) & 100 (100)  & 100 (100) \\
+T5 & \textbf{97.9 (69.6)} & 97.2 (64.4) & 96 (49.1)  & 97.7(66.3) & 97.3 (65.6) \\
+\midrule
+T1-OOV & 94.0 (62.2) & 81.7 (0) & 92.5 (54.7)  & 94.0 (62.2) & \textbf{100 (100)}\\
+T2-OOV & 86.5 (12.4)  & 78.9 (0) & 83.2 (0) & 86.5 (12.4) & \textbf{100 (100)}\\
+T3-OOV & 90.3 (38.7) & 75.3 (0) & 82.9 (0) & 75.2 (0) &  \textbf{95.7 (66.6)}   \\
+T4-OOV & 100 (100) & 57.0 (0) & 100 (100) & 100 (100) & 100 (100) \\
+T5-OOV & 84.5 (2.3) & 67.4 (0) & 73.6 (0) & 75.6 (0) & \textbf{91.7 (18.5)}   \\
+\bottomrule
+\end{tabular}
+\caption{Per-response and per-dialog accuracies (in brackets) on bAbI dialog tasks of \sys\ and other generative model baselines. We highlight the best accuracies achieved for each task.} 
+\label{tab:babi}
+\end{table*}
+
+Table \ref{tab:babi} reports the per-response and per-dialog (in parentheses) accuracies on the bAbI dialog tasks for the generative models. Due to brevity we show the results for the retrieval-based models in the Appendix.
 % retrieval model comparison
 The multi-hop retrieval-based models such as QRN, MN and GMN perform well on the non-OOV test sets for tasks 1, 2, and 5, but fail to exhibit similar performance on the corresponding OOV test sets. This result is expected as these models are trained to retrieve from a pre-defined set of responses. Their poor non-OOV performance on tasks 3 and 4 is attributed to an error in the bAbI dataset construction, due to which, the non-OOV and OOV test conditions are the same for these tasks (see Appendix).
 
@@ -95,7 +121,7 @@ Table \ref{tab:smd} reports the results on DSTC2. \sys\ exhibits performance com
 \label{sec:expt1}
 We use our generated knowledge adaptability (KA) test sets to measure the robustness of \sys\ and the other baselines to changes in the KB. We perform this experiment on 4 different tasks, namely bAbI tasks 1 and 5, CamRest, and SMD.
 
-Figures \ref{label-a} and \ref{label-b} show the per-response accuracies of the two bAbI dialog tasks plotted against the percentage of unseen entities in KA sets. From Figure \ref{label-a} we observe that \sys\ remains immune to any variablity in the KB content, whereas the performance of Mem2Seq and Seq2Seq models drops drastically due to their inability to capture semantic representations of the injected KB entities. We see a similar trend in Figure \ref{label-b}, but here all the models show a drop in performance, with \sys\ appearing the most steady. We explain this trend using the example dialog in Table \ref{tab:t5_dis}. In the current dialog context, the system is required to provide the address of the selected restaurant, but since more than one restaurant in the KB is unseen, it becomes ambiguous for the network to identify the correct restaurant and infer its address. In the end, the system is forced to pick a random address -- the probability of which being correct decreases as more restaurants become unseen.
+Figures \ref{fig:t1Acc} and \ref{fig:t5Acc} show the per-response accuracies of the two bAbI dialog tasks plotted against the percentage of unseen entities in KA sets. From Figure \ref{fig:t1Acc} we observe that \sys\ remains immune to any variablity in the KB content, whereas the performance of Mem2Seq and Seq2Seq models drops drastically due to their inability to capture semantic representations of the injected KB entities. We see a similar trend in Figure \ref{fig:t5Acc}, but here all the models show a drop in performance, with \sys\ appearing the most steady. We explain this trend using the example dialog in Table \ref{tab:t5_dis}. In the current dialog context, the system is required to provide the address of the selected restaurant, but since more than one restaurant in the KB is unseen, it becomes ambiguous for the network to identify the correct restaurant and infer its address. In the end, the system is forced to pick a random address -- the probability of which being correct decreases as more restaurants become unseen.
 
 \begin{table}[!t]
 \centering
@@ -137,94 +163,14 @@ Figures \ref{label-a} and \ref{label-b} show the per-response accuracies of the 
 \label{tab:t5_dis}
 \end{table}
 
-The performance on the CamRest KA test sets is illustrated in Figures \ref{fig:camrest} and \ref{label-c}. \sys\ has the best performance with even a slight increase in both BLEU and Entity F1 metrics as more OOV content is injected in the dialog, probably because it is clear that it needs to copy when processing unseen entities.
+The performance on the CamRest KA test sets is illustrated in Figures \ref{fig:camBleu} and \ref{fig:camF1}. \sys\ has the best performance with even a slight increase in both BLEU and Entity F1 metrics as more OOV content is injected in the dialog, probably because it is clear that it needs to copy when processing unseen entities.
 % We speculate that because CamRest consists of relatively short dialogs, the ability to inference is more profound and the model is successfully able to copy the OOV entity. Moreover, when the system encounters an unseen word, it is certain to copy and due to less confusion in deciding to generate or copy the word, \sys\ is able to give increased performance. 
-Seq2Seq+Copy is unable to perform well in CamRest as the length of the input (dialog history + KB tuples) is long and the size of the training set is also small. We believe that Seq2Seq+Copy works best in an environment with an abundance of short dialog training data (e.g., bAbI task 1 in Figure \ref{label-a}).
+Seq2Seq+Copy is unable to perform well in CamRest as the length of the input (dialog history + KB tuples) is long and the size of the training set is also small. We believe that Seq2Seq+Copy works best in an environment with an abundance of short dialog training data (e.g., bAbI task 1 in Figure \ref{fig:t1Acc}).
 
-SMD consists of dialogs with a large KB and a highly varying response pattern. This makes it very difficult to learn the language model -- reflected in the low BLEU scores for all the systems. \sys\ still provides the best F1 entity score due to its ability to inference efficiently on the large KB (Figure \ref{label-d}). Mem2Seq shows the best BLEU score performance on the original test set, but its performance drop of 42.5\%, from 10.3 at 0\% unseen to 5.93 at 100\% unseen, is a lot heavier than that of \sys\ which only drops 7.6\% -- 8.27 at 0\% unseen to 7.64 at 100\% unseen.
+SMD consists of dialogs with a large KB and a highly varying response pattern. This makes it very difficult to learn the language model -- reflected in the low BLEU scores for all the systems. \sys\ still provides the best F1 entity score due to its ability to inference efficiently on the large KB (Figure \ref{fig:smdBleu}). Mem2Seq shows the best BLEU score performance on the original test set, but its performance drop of 42.5\%, from 10.3 at 0\% unseen to 5.93 at 100\% unseen, is a lot heavier than that of \sys\ which only drops 7.6\% -- 8.27 at 0\% unseen to 7.64 at 100\% unseen.
 
 \noindent \textbf{Human Evaluation:}
 We summarize the human evaluation results for real-world datasets on the 50\% unseen KA test set in Table \ref{tab:amt_dis}. \sys\ again outperforms the baselines and is labeled \emph{successful} twice more often than the next best model on both Camrest and SMD. Seq2Seq appears to produce better sentence structures on the SMD dataset, primarily because it does not attempt to learn inference on the KB, allowing it to solely focus on learning the language model better. 
-
-\begin{figure}[!t]
-\vspace*{0.5in}
-
-\centering
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/task1_Acc.png}
- \caption{Multi-Component Dialog System}\label{fig:systemfull}
-\end{subfigure}
-
-\vspace*{0.5in}
-
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/task1_F1.png}
- \caption{End-to-end Dialog System}\label{fig:end2end}
-\end{subfigure}
-
-\caption{Task 1}
-\vspace*{0.5in}
-
-\end{figure}
-
-\clearpage
-
-\begin{figure}[!t]
-\centering
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/task5_Acc.png}
- \caption{Multi-Component Dialog System}\label{fig:systemfull}
-\end{subfigure}
-
-\vspace*{0.5in}
-
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/task5_F1.png}
- \caption{End-to-end Dialog System}\label{fig:end2end}
-\end{subfigure}
-
-\caption{Task 5}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[!t]
-\centering
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/camrest_BLEU.png}
- \caption{Multi-Component Dialog System}\label{fig:systemfull}
-\end{subfigure}
-
-\vspace*{0.5in}
-
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/camrest_F1.png}
- \caption{End-to-end Dialog System}\label{fig:end2end}
-\end{subfigure}
-
-\caption{CamRest}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[!t]
-\centering
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/smd_BLEU.png}
- \caption{Multi-Component Dialog System}\label{fig:systemfull}
-\end{subfigure}
-
-\vspace*{0.5in}
-
-\begin{subfigure}{0.8\textwidth}
- \includegraphics[width=\linewidth]{assets/graphs/smd_F1.png}
- \caption{End-to-end Dialog System}\label{fig:end2end}
-\end{subfigure}
-
-\caption{SMD}
-\end{figure}
-
-\clearpage
 
 \begin{table}[t]
 \centering
@@ -246,6 +192,87 @@ Mem2Seq & 35 & 2.06 & 26 & 1.9 \\
 \label{tab:amt_dis}
 \end{table}
 
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task1_Acc.png}
+ \caption{}\label{fig:t1Acc}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task1_F1.png}
+ \caption{}\label{fig:t1F1}
+\end{subfigure}
+
+\caption{Task 1 Disentanglement Evaluation Plots}
+\vspace*{0.5in}
+
+\end{figure}
+
+\clearpage
+
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task5_Acc.png}
+ \caption{}\label{fig:t5Acc}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/task5_F1.png}
+ \caption{}\label{fig:t5F1}
+\end{subfigure}
+
+\caption{Task 5 Disentanglement Evaluation Plots}
+\end{figure}
+
+\clearpage
+
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/camrest_BLEU.png}
+ \caption{}\label{fig:camBleu}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/camrest_F1.png}
+ \caption{}\label{fig:camF1}
+\end{subfigure}
+
+\caption{CamRest Disentanglement Evaluation Plots}
+\end{figure}
+
+\clearpage
+
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/smd_BLEU.png}
+ \caption{}\label{fig:smdBleu}
+\end{subfigure}
+
+\vspace*{0.5in}
+
+\begin{subfigure}{0.8\textwidth}
+ \includegraphics[width=\linewidth]{assets/graphs/smd_F1.png}
+ \caption{}\label{fig:smdF1}
+\end{subfigure}
+
+\caption{SMD Disentanglement Evaluation Plots}
+\end{figure}
+
+\clearpage
 
 % \begin{table}[t]
 % \centering
@@ -387,6 +414,9 @@ Multi-Hop  & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    
 %We finally see that, the OOV performance is as comparable to the non-OOV performance when all the elements of \sys\ are combined together.
 
 \begin{table}[!h]
+
+\vspace*{0.5in}
+
 \centering
 \small
 \begin{tabular}{c|p{13cm}}
@@ -459,7 +489,11 @@ Multi-Hop  & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    
 \end{tabular}
 \caption{An example of responses generated by \sys\ and baselines on bAbI dialog Task-5. This example is from the KA test set with 100\% unseen entities.}
 \label{tab:task5-qualeval}
+
+\vspace*{0.5in}
+
 \end{table}
+
 
 \subsection{Qualitative Evaluation}
 We qualitatively compare the performance of \sys\ with other baselines using examples.
@@ -468,7 +502,7 @@ Table \ref{tab:camrest-qualeval}, demonstrates the ability of \sys\ to copy enti
 
 Table \ref{tab:task5-qualeval} contains only unseen entities. This example highlights the shortcomings of the Seq2Seq model as it ends up predicting a restaurant encountered during training. Mem2Seq copies a restaurant name without learning to sort the restaurants based on rating. \sys, with its efficient memory addressing, is seen to be able to solve both issues.
 
-\clearpage
+% \clearpage
 
 \subsection{Visual Evaluation}
 \label{ssec:hierarattn}
@@ -490,3 +524,7 @@ The attention over memory cells provides \sys\ with the ability to infer over mu
 \caption{Visualization of attention weights on selected portions of memory in (a) \sys\ with two-level attention vs (b) \sys\ with one-level attention}
 \label{fig:attention}
 \end{figure*}
+
+\clearpage
+
+\section{\sys -RL Experiments}

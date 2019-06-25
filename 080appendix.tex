@@ -1,3 +1,154 @@
+\section{Evaluation Results with Baseline Comparison}
+
+\begin{table*}[!ht]
+\centering
+\footnotesize
+\begin{tabular}{c|cccc|c}
+\toprule
+&  \multicolumn{4}{c}{\textbf{Generative Models}}  \\
+\cmidrule{2-6}
+\textbf{Task} & \textbf{Mem2Seq*} & \textbf{Seq2Seq} & \textbf{Seq2Seq+Copy} & \textbf{Mem2Seq} & \textbf{ \sys\ }  \\
+\midrule
+T1 & 100 (100) & 100 (100) & 100 (100) & 100 (100) & 100 (100) \\
+T2 & 100 (100) &  100 (100) &  100 (100) & 100 (100) & 100 (100) \\
+T3 & 94.7 (62.1) & 74.8 (0) & 85.1 (19.0)& 74.9 (0) & \textbf{95.2 (63.8)}    \\
+T4 & 100 (100) & 57.2 (0) & 100 (100) & 100 (100)  & 100 (100) \\
+T5 & \textbf{97.9 (69.6)} & 97.2 (64.4) & 96 (49.1)  & 97.7(66.3) & 97.3 (65.6) \\
+\midrule
+T1-OOV & 94.0 (62.2) & 81.7 (0) & 92.5 (54.7)  & 94.0 (62.2) & \textbf{100 (100)}\\
+T2-OOV & 86.5 (12.4)  & 78.9 (0) & 83.2 (0) & 86.5 (12.4) & \textbf{100 (100)}\\
+T3-OOV & 90.3 (38.7) & 75.3 (0) & 82.9 (0) & 75.2 (0) &  \textbf{95.7 (66.6)}   \\
+T4-OOV & 100 (100) & 57.0 (0) & 100 (100) & 100 (100) & 100 (100) \\
+T5-OOV & 84.5 (2.3) & 67.4 (0) & 73.6 (0) & 75.6 (0) & \textbf{91.7 (18.5)}   \\
+\bottomrule
+\end{tabular}
+\caption{Per-response and per-dialog accuracies (in brackets) on bAbI dialog tasks of \sys\ and other generative model baselines. We highlight the best accuracies achieved for each task.} 
+\label{tab:Ababi}
+\end{table*}
+
+\begin{table*}[!ht]
+\centering
+\footnotesize
+\begin{tabular}{c|ccc|c}
+\toprule
+& \multicolumn{3}{c|}{\textbf{Retrieval Models}} & \multicolumn{1}{c}{\textbf{Generative Models}}  \\
+\cmidrule{2-5}
+\textbf{Task} & \textbf{QRN} & \textbf{MN} &  \textbf{GMN} & \textbf{ \sys\ }  \\
+\midrule
+T1 & 99.9 (-) & 99.6 (99.6) & 100 (100) & 100 (100) \\
+T2 & 99.5 (-) & 100 (100) & 100 (100)& 100 (100) \\
+T3 & 74.8 (-) & 74.9 (2.0) & 74.9 (0)& \textbf{95.2 (63.8)}    \\
+T4 & 57.2 (-) & 59.5 (3.0) & 57.2 (0)& \textbf{100 (100)} \\
+T5 & \textbf{99.6 (-)} & 96.1 (49.4) & 96.3 (52.5) & 97.3 (65.6) \\
+\midrule
+T1-OOV & 83.1 (-) & 72.3 (0) & 82.4 (0) & \textbf{100 (100)}\\
+T2-OOV & 78.9 (-) & 78.9 (0) & 78.9 (0) & \textbf{100 (100)}\\
+T3-OOV & 75.2 (-) & 74.4 (0) & 75.3 (0) & \textbf{95.7 (66.6)}   \\
+T4-OOV & 56.9 (-) & 57.6 (0) & 57.0 (0) & \textbf{100 (100)} \\
+T5-OOV & 67.8 (-) & 65.5 (0) & 66.7 (0) & \textbf{91.7 (18.5)}   \\
+\bottomrule
+\end{tabular}
+\caption{Per-response and per-dialog accuracies (in brackets) on bAbI dialog tasks of \sys\ and other retrieval model baselines}. 
+\label{tab:babi}
+\end{table*}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+ \begin{tabular}{l|cc|cc}
+\toprule
+& \multicolumn{2}{c|}{\textbf{CamRest}} & \multicolumn{2}{c}{\textbf{SMD}}  \\ \cmidrule{2-5}
+& \textbf{BLEU} & \textbf{Ent. F1} & \textbf{BLEU} & \textbf{Ent. F1} \\
+\midrule
+Mem2Seq* & 12.7 & 39 & 12.6 & 33.4  \\
+\midrule
+Seq2Seq & 11.4 & 40.6 & 8.7 & 34.9  \\
+%Seq2Seq+Attn & & & 9.3 & 19.9 \\
+Seq2Seq+Copy & 4.7 & 32.2 & 3.23 & 16.9  \\
+Mem2Seq & 12.7 & 39 & \textbf{10.3} & 31.8 \\ 
+\midrule
+\sys\ & \textbf{15.2} & \textbf{43.1} & 8.3 & \textbf{35.9} \\
+\bottomrule
+\end{tabular}
+\caption{Performance of \sys\ and baselines on the CamRest and SMD datasets}
+\label{tab:Asmd}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+ \begin{tabular}{l|cc|cc}
+\toprule
+& \multicolumn{2}{c|}{\textbf{CamRest}} & \multicolumn{2}{c}{\textbf{SMD}}  \\ \cmidrule{2-5}
+& \textbf{Info} & \textbf{Grammar} & \textbf{Info} & \textbf{Grammar} \\
+\midrule
+Seq2Seq & 46 & 2.24 & 35 &  2.38 \\
+Seq2Seq+Copy & 27 & 1.1 & 21 &  1.04 \\
+Mem2Seq & 51 & 2.2 & \textbf{38} &  2.0 \\
+\midrule
+\sys\ & \textbf{77} & \textbf{2.28} & 36 &  \textbf{2.5} \\
+
+\bottomrule
+\end{tabular}
+\caption{AMT Evaluations on CamRest and SMD} 
+\label{tab:Aamt_perf}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+ \begin{tabular}{l|cc|cc}
+\toprule
+& \multicolumn{2}{c|}{\textbf{CamRest}} & \multicolumn{2}{c}{\textbf{SMD}}  \\ \cmidrule{2-5}
+& \textbf{Info} & \textbf{Grammar} & \textbf{Info} & \textbf{Grammar} \\
+\midrule
+Seq2Seq & 26 & 2.28 & 22 & \textbf{2.44} \\
+Seq2Seq+Copy & 22 & 1.22 & 16 & 1.04 \\
+Mem2Seq & 35 & 2.06 & 26 & 1.9 \\
+\midrule
+\sys\ & \textbf{80} & \textbf{2.44} & \textbf{51} &  2.28 \\
+
+\bottomrule
+\end{tabular}
+\caption{AMT Evaluations on CamRest and SMD (50\% unseen) KA datasets} 
+\label{tab:Aamt_dis}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+% \vspace{2mm}
+\begin{tabular}{l|c|c|c}
+\toprule
+   & \textbf{bAbI Dialog} & \textbf{bAbI Dialog (OOV)}  & \textbf{CamRest} \\ \cmidrule{2-4}
+    & Avg. Response Acc.  & Avg. Response Acc. & Ent. F1       \\ \midrule
+\sys\ w/o {\sc BoSs} Memory & 85.54 & 77.14 & 29          \\
+\sys\ w/o $\mathcal{L}_{d}$          & 97.2 & 84.3 & 40.1          \\
+\sys\  w/o DLD     & 97.74 & 86.52 & 40.45         \\ \midrule
+\sys\                 & 98.5    & 97.48 & 43.1    
+\\ \bottomrule
+\end{tabular}
+\caption{Ablation study: impact of each model element on \sys\ }
+\label{tab:Aablation}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\begin{tabular}{l|ccccc|ccccc|cc}
+\toprule
+   & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks}} & \multicolumn{5}{c|}{\textbf{bAbI Dialog Tasks (OOV)}}  & \multicolumn{2}{c}{\textbf{CamRest}} \\ \cmidrule{2-6} \cmidrule{7-11} \cmidrule{12-13}
+    & T1  & T2  & T3   & T4   & T5   & T1 & T2 & T3 & T4 & T5 & BLEU        & Ent. F1       \\ \midrule
+1-Hop  & 100 & 100 & 92.3 & 100 & 90.5 & 100 & 100 & 91.4 & 100 & 89 & 10.5 & 36.9 \\
+Multi-Hop  & 100 & 100 & 95.2 & 100  & 97.3 & 100    & 100    & 95.7   & 100    & 91.7   & 15.2        & 43.1    
+\\ \bottomrule
+\end{tabular}
+\caption{Ablation study: impact of hops in \sys\ encoder }
+\label{tab:Aablationhop}
+\end{table}
+
+\clearpage
+
 \section{Dataset Preprocessing and Faults}
 \label{sec:preprocess}
 \subsection{Mem2Seq Preprocessing}
