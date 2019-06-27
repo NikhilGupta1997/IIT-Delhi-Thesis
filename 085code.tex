@@ -1,0 +1,52 @@
+\section{Combining the Generate and Copy Distribution}
+\begin{lstlisting}[language=Python]
+def _calc_final_dist(self, next_outputs, attn_dists, p_gens, oov_ids, oov_sizes, decoder_vocab_size, batch_size):
+  """Calculate the final distribution, for the pointer-generator model
+
+  Args:
+    vocab_dists: The vocabulary distributions. (batch_size, vsize)
+    attn_dists: The attention distributions. (batch_size, attn_len)
+    p_gens : The soft switch weight for copy and generate probabilities
+    oov_ids : List of ids of the OOV words in the context
+    oov_sizes : Size of each OOV set for each example
+    decoder_vocab_size : Size of deocde vocab = vsize
+    batch_size : Number of examples in the input
+
+  Returns:
+    final_dists: The final distributions. List length max_dec_steps of 
+     (batch_size, extended_vsize) arrays.
+  """
+  with tf.variable_scope('final_distribution'):
+  	# Obtain Weighted Vocab Distribution
+    vocab_dists = tf.nn.softmax(next_outputs.rnn_output)
+    vocab_dists = tf.multiply(vocab_dists, p_gens)
+
+    # Obtain Weighted Attention Distribution
+    def one_minus_fn(x): return 1 - x
+    p_gens = tf.map_fn(one_minus_fn, p_gens)
+    attn_dists = tf.multiply(p_gens, attn_dists)
+
+    # Concatenate some zeros to each vocabulary dist, to hold the 
+     probabilities for in-article OOV words
+    max_oov_len = tf.reduce_max(oov_sizes, reduction_indices=[0])
+    extended_vsize = decoder_vocab_size + max_oov_len
+    extra_zeros = tf.zeros((batch_size, max_oov_len))    
+    vocab_dists_ext = array_ops.concat([vocab_dists, extra_zeros], axis=1)
+
+    # Create Index which maps each word in the context to a particular cell
+    batch_nums = tf.range(0, limit=batch_size) 
+    batch_nums = tf.expand_dims(batch_nums, 1) 
+    attention_ids = tf.reshape(oov_ids, [batch_size, -1])
+    attn_len = tf.shape(attention_ids)[1]  # number of states we attend over
+    batch_nums = tf.tile(batch_nums, [1, attn_len])
+    indices = tf.stack((batch_nums, attention_ids), axis=2)
+
+    # We project the attention weights to each index cell using scatter_nd
+    shape = [batch_size, extended_vsize]
+    attn_dists_projected = tf.scatter_nd(indices, attn_dists, shape)
+
+    # Add the vocab distributions and the copy distributions together to get the final distributions
+    final_dists = math_ops.add(vocab_dists_ext, attn_dists_projected)
+    return BasicDecoderOutput(final_dists, next_outputs.sample_id)
+
+\end{lstlisting}

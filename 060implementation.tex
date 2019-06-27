@@ -5,23 +5,23 @@ In this chapter we will discuss the implementation on various modules of the \sy
 We have created multiple modules, each with a different functionality and objective. We list the major modules in the \sys\ architecture below:
 
 \begin{enumerate}
-	\item \textbf{Main Controller} - T
-	\item \textbf{Data Loader} - 
-	\item \textbf{Data Batcher}
-	\item \textbf{Memory Network}
-	\item \textbf{Dynamic Decoder}
-	\item \textbf{Attention Mechanism}
-	\item \textbf{Beam Search}
-	\item \textbf{Evaluator}
-	\item \textbf{Logging}
+	\item \textbf{Main Controller} - This component manages the flow of data and information among the other components. It reads and cleans the data and manages the training and prediction of the dialogs via the memory network.
+	\item \textbf{Data Loader} - This is incharge of reading all the data from files and formatting it in an easy to use way.
+	\item \textbf{Data Batcher} - This module takes data from the data loader class and performs any preprocessing and indexing required by the Memory network to use the data for training.
+	\item \textbf{Memory Network} - This is the network of the encoder and decoder that both trains and predicts the responses for dialogs given the context and user query.
+	\item \textbf{Dynamic Decoder} - This is a built in library of tensorflow that was modified to allow batch decoding and beam search.
+	\item \textbf{Attention Mechanism} - This is a built in library of tensorflow that was modified to enable our multi-level attention mechanism.
+	\item \textbf{Beam Search} - This is the built in library of tensorflow that was modified to allow constraint decoding and the copy generate mechanism.
+	\item \textbf{Evaluator} - This class gives evaluation metric scores on the response predictions by comparing them with the gold examples.
+	\item \textbf{Logging} - This component maintains any errors in the code during runtime and allows for automatic deployment of multiple runs. It also generates log files giving detailed explanations of each run.
 \end{enumerate}
 
-We depict the interaction between the multiple components in Figure \ref{fig:sys_comp}. The components with a blue shade will be covered in the scope of this thesis.
+We depict the interaction between the multiple components in Figure \ref{fig:sys_comp}. Parts in blue have been explained in this thesis. Half colored blocks mean part of the work regarding that component is explained and the rest is not in the scope of this thesis.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=1.0]{assets/figures/components_orig.pdf}
-\caption{(a) an example dialog with history and KB tuples. (b) an illustration of Mem2Seq memory. (c) an illustration of \sys\ memory}
+\caption{Components of the \sys\ system and their interaction.}
 \label{fig:sys_comp}
 \end{figure}
 
@@ -52,12 +52,12 @@ There are mainly three main components that have been added to the \sys\ archite
 	\item \textbf{Augmented REINFORCE} - This takes in results from both the API explorer populated buffer and the RL-decoder outputs and runs Augmented REINFORCE (MAPO) on top of them.
 \end{enumerate}
 
-We observe the interaction between these added components and the previous architecture in Figure \ref{fig:sys_comp_rl}.
+We observe the interaction between these added components and the previous architecture in Figure \ref{fig:sys_comp_rl}. Below we discuss modifications to previous components and newly added features.
 
 \begin{figure}[t]
 \centering
 \includegraphics[scale=1.2]{assets/figures/rl_components.pdf}
-\caption{(a) an example dialog with history and KB tuples. (b) an illustration of Mem2Seq memory. (c) an illustration of \sys\ memory}
+\caption{The components of the \sys -RL system and their interaction.}
 \label{fig:sys_comp_rl}
 \end{figure}
 
