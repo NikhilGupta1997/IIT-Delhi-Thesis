@@ -118,7 +118,7 @@ The reinforment learning based API generation system builds upon the original \s
 \subsection{API Explorer}
 This module has the objective of aiding the exploration of valid APIs with a strong reward. Our actual reward for a generated API is implicit, because it depends on the responses of the response model based on the results queried by the API. Hence, we go on to define a psuedo reward for each API as the following:
 
-\noindent\textbf{Psudo Reward}
+\noindent\textbf{Pseudo Reward}
 \label{ssec:PsReward}
 The responses by the system depend on the results fetched by the API from the KB. The system will only be able to copy KB information into its response limited to these results. Hence we can measure the performance of a certain API by checking the overlap of the information required by the responses and that present in its results. We use the popular F1 metric which is a combination of precision and recall. For us recall is important because it measures the extent of overlap and the precision will make sure that the results retrieved say as concise as possible. We don't want to have a very generic API which results in a very large result set!. Our metric which we term as the {\em Psuedo Reward} is calculated as follows.
 \begin{gather}

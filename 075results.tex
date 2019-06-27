@@ -530,12 +530,39 @@ The attention over memory cells provides \sys\ with the ability to infer over mu
 \section{\sys -RL Experiments}
 
 \subsection{Datasets}
-We modified two of the previously used datasets: bAbi and camrest and used them for this experiment. We removed the API call and the knowledge base results in both of the datsets and added a single {\em make API} symbol in their place.
+We modified two of the previously used datasets: (1) \textbf{bAbI Task 3} and (2) \textbf{Camrest} and used them for this experiment. We removed the API call and the knowledge base results in both of the datsets and added a single {\em make API} symbol in their place.
 
 \subsection{Baselines}
 We used two baselines for this task
 
 \noindent\textbf{Ground Truth} in which we provide the true API call for each dialog instance. It is more of a upper limit on the performance for the problem, rather than a baseline. 
 
+\noindent\textbf{Greedy} in which we train the RL-decoder using supervised learning with the best APIs found during initial exploration as gold. We run exploration long enought to capture the highest reward APIs for each dialog, which is made feasible with our small search space.
 
-\subsection{Setup}
+\subsection{Results}
+We train the RL-decoder using a two phase training mechanism. In the first phase we train just the RL-decoder till it nearly converges. In the second phase we start training the response encoder-decoder architecturee in tandem with the RL-decoder. 
+
+During Phase 1 of the training, the decoder mangages to converge to 100\% perfect API prediction on the bAbI Task 3 train set in ~10 epochs. We show the performance on the corresponding test sets in Table \ref{tab:rl_res}. From the table we observe that the Ground Truth manages to reach nearly 84.5 percent accuracy. This is lower than the 94.6\% \footnote{This accuracy is caluculated by taking the responses of \sys\ on Task 3 and removing all the turns in which it had to predict an API call. Hence it doesn't match the reported 95.2\%} we achieved with \sys\ on the original Task 3 dataset. We attribute this difference to due hyperparameter tuning as we only had time for runs with one set of hyperparameters during the time of writing of this thesis.
+
+Greedy mode is significantly lower in performance than the Ground Truth which can be attributed to data bias which plagues the greedy implementation. There is no provision for the greedy system to mitigate this bias as it only trains on APIs based on their reward. which might be equal for multiple APIs given our KB.
+
+\sys\ -RL shows promising results on the first run and very closely matches the ground truth accuracies in both non-OOV and OOV test sets. This reflects on the ability of the system to successfully overcome the biases which effect MAPO with a normal decoder.
+
+We do not report results on the Camrest dataset as they are still running during the time of writing of this thesis. Upto date infromation will be displayed in the README of the \sys -RL repository.
+
+\begin{table}[t]
+\centering
+\footnotesize
+ \begin{tabular}{l|c|c}
+\toprule
+& {\textbf{Task 3}} & {\textbf{Task 3 OOV}}  \\ 
+\midrule
+Ground Truth & \textbf{84.5} & \textbf{81.17} \\
+Greedy & 74.9 & 74.28 \\
+\midrule
+\sys -RL & 82.98 & 79.41 \\
+\bottomrule
+\end{tabular}
+\caption{\sys -RL Evaluation comparison with baselines on bAbI Task 3} 
+\label{tab:rl_res}
+\end{table}
