@@ -27,19 +27,53 @@ We depict the interaction between the multiple components in Figure \ref{fig:sys
 
 \noindent\textbf{Main Controller}
 
+This is the main file that we run from the terminal interface. It manages the input parameters that are given by the user and makes sure they are accessible by any another part of the code in other files as well. It is incharge of calling the Data Loader and the Data Batcher to read the data, preprocess, and getting it ready to be fed as input to the main memory network. 
+
+It maintains the train, validation, and test sets separately, each with its different purpose. The validation set is used for early stopping and the state is stored for the best observed validation score using \emph{tf.saver}.
+
+Finally, it is incharge of collecting the responses for each dialog from the model and running the evaluation scripts to get the final metric scores to output to the user. 
+
+For readability of the processing and training, we use the \emph{tqdm} library to easily visualise progress as well as get important information such as average loss and time-per-epoch
+
 \noindent\textbf{Data Loader}
 
-\noindent\textbf{Data Batcher}
+This class is responsible for reading the dialogs from corresponding files (train, validation, and test). It breaks each dialog on each turn into deparate dialogs. Each dialog is further broken into three parts: context, user query, and system response.
+
+\noindent\textbf{Data Batcher} 
+
+The data batcher is responsible for all the preprocessing that needs to be done on the data. Each word has to be replaced with its corresponding index and we have to maintain list of OOV words as well. It removes punctuation and also adds special characters that will aid in training, such as EOS and UNK. All KB associated words are also tagged during the preprocessing which will be important when implementing disentanglement loss.
+
+Further the data batcher is responsible for effectively partitioning the data into batches so that they can be sent into the memory network for training and prediction.
 
 \noindent\textbf{Memory Network}
 
+This is the main \sys\ model containing the entire architecture as discussed in Chapter \ref{chap:approach}. It hosts the multi-hop encoder and the generative, copy-enabled decoder. It is implemented as a class with all the associated hyperparameters as private variables of this class. This enables us to easily store and transport any learned model, as it has all the information needed to run.
+
+The model has two APIs exposed to the Main Controller: \emph{batch\_train} and \emph{batch\_fit}. The first one is responsible to train the weights of the model parameters and implements back-propagation over the whole network after calculating the loss. The gold responses are passed as input to the train API. The second one is responsible for predicting the correct responses, but does not perform any learning of the weights. The only inputs to this API is the current dialog context and the user query.
+
 \noindent\textbf{Dynamic Decoder}
+
+This component was modified from the original Tensorflow decode library. Its objective is to enable batch decoding in which each prediction of each batch element can be of different sizes. We modified it so that at each timestep it combines the generate vocab distribution and the attention distribution. The code listing for this weighted combination is given in Appendix \ref{code:dists}. We also modified the outputs from this library which now also outputs the p\_gen values along with each weighted vocab distribution. This is important for calculating disentanglement loss.
 
 \noindent\textbf{Attention Mechanism}
 
+This component was modified from the original Tensorflow decode library. We changed the way that it computes attention so that it could handle multi-level attention over our multi-level {\sc{BoSs}} memory. We changed the output of its APIs so that they could incorporate the new attention information. The code listing for the new attention mechanism is given in Appendix \ref{code:attn}. We show how to generate sentence level and word level attention seperately and how to combine them.
+
 \noindent\textbf{Beam Search}
 
+The beam search decoder is another built-in library in Tensorflow which we have modified to work with our modified dynamic decoder, attention mechanism, and copy-enabled output generation. The beam width can be any number as required and has been tested to beam width sizes of 64. It also does a weighted generate and attention combination, which now has to be applied onto multiple beams simulataneously, leading to increased complexity.
+
 \noindent\textbf{Evaluator}
+
+This is a script that takes the predicted and the gold responses and performs evaluations of serveral kinds. These evaluated scores are then sent to the main controller which displays them to the user. 
+
+Some metrics evaluated by the evaluator are:
+\begin{itemize}
+	\item \emph{BLEU Score} - This is a standard metric used on the real-world datasets where exact matches between predicted and gold responses is very rare. Hence BLEU helps to measure degree of closeness of the prediction.
+	\item \emph{F1 Score} - This is a combination of Recall and Precision over the predicted KB items in the responses.
+	\item \emph{Per-Response Accuracy} - For the fabricated datasets (bAbI) we look for an exact match between predicted and gold. The extent of exact matches is measures via this metric.
+	\item \emph{Per-Dialog Accuracy} - This measures how many dialogs had all perfect response predictions for all its turns.
+\end{itemize}
 
 \section{Parts of the \sys\-RL Architecture}
 

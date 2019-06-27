@@ -1,4 +1,5 @@
 \section{Combining the Generate and Copy Distribution}
+\label{code:dists}
 \begin{lstlisting}[language=Python]
 def _calc_final_dist(self, next_outputs, attn_dists, p_gens, oov_ids, oov_sizes, decoder_vocab_size, batch_size):
   """Calculate the final distribution, for the pointer-generator model
@@ -48,5 +49,73 @@ def _calc_final_dist(self, next_outputs, attn_dists, p_gens, oov_ids, oov_sizes,
     # Add the vocab distributions and the copy distributions together to get the final distributions
     final_dists = math_ops.add(vocab_dists_ext, attn_dists_projected)
     return BasicDecoderOutput(final_dists, next_outputs.sample_id)
+
+\end{lstlisting}
+
+\section{Multi-Level Attention Mechanism}
+\label{code:attn}
+\begin{lstlisting}[language=Python]
+def _luong_score(query, keys, scale):
+  """Implements Luong-style (multiplicative) scoring function at Sentence Level
+
+  Args:
+    query: Tensor, shape `[batch_size, num_units]` to compare to keys.
+    keys: Processed memory, shape `[batch_size, max_time, num_units]`.
+    scale: Whether to apply a scale to the score function.
+
+  Returns:
+    A `[batch_size, max_time]` tensor of unnormalized score values.
+
+  Raises:
+    ValueError: If `key` and `query` depths do not match.
+  """
+  # Check key and query depths
+  depth = query.get_shape()[-1]
+  key_units = word_keys.get_shape()[-1]
+  if depth != key_units:
+    raise ValueError("Size of query and key don't match")
+
+  query = array_ops.expand_dims(query, 1)
+
+  # Calculate Attention
+  score = math_ops.matmul(query, keys, transpose_b=True)
+  score = array_ops.squeeze(score, [1])
+
+  return score
+
+def _luong_word_score(query, word_keys, scale, batch_size):
+  """Implements Luong-style (multiplicative) scoring function at Word Level
+
+  Args:
+    query: Tensor, shape `[batch_size, num_units]` to compare to keys.
+    word_keys: Processed word level memory, shape `[batch_size, max_time, num_units]`.
+    scale: Whether to apply a scale to the score function.
+
+  Returns:
+    A `[batch_size, max_time]` tensor of unnormalized score values.
+
+  Raises:
+    ValueError: If `key` and `query` depths do not match.
+  """
+  # Check key and query depths
+  depth = query.get_shape()[-1]
+  key_units = word_keys.get_shape()[-1]
+  if depth != key_units:
+    raise ValueError("Size of query and key don't match")
+
+  query = array_ops.expand_dims(query, 1)
+
+  # Optimisation to transpose over 3D tensor instead of 4D tensor.
+  save_shape = word_keys.get_shape().as_list()
+  word_keys_small = tf.reshape(word_keys,  [batch_size, -1, save_shape[2]*save_shape[3]])
+  word_keys = tf.transpose(word_keys_small, [1, 0, 2])
+  word_keys = tf.reshape(word_keys, [-1, batch_size, save_shape[2], save_shape[3]])
+
+  # Calculate Attention
+  context_fn = lambda key: array_ops.squeeze(math_ops.matmul(query, key, transpose_b=True), [1])
+  scores = tf.map_fn(context_fn, word_keys)
+  scores = tf.transpose(scores, [1, 0, 2])
+
+  return scores
 
 \end{lstlisting}
