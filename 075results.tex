@@ -528,3 +528,14 @@ The attention over memory cells provides \sys\ with the ability to infer over mu
 \clearpage
 
 \section{\sys -RL Experiments}
+
+\subsection{Datasets}
+We modified two of the previously used datasets: bAbi and camrest and used them for this experiment. We removed the API call and the knowledge base results in both of the datsets and added a single {\em make API} symbol in their place.
+
+\subsection{Baselines}
+We used two baselines for this task
+
+\noindent\textbf{Ground Truth} in which we provide the true API call for each dialog instance. It is more of a upper limit on the performance for the problem, rather than a baseline. 
+
+
+\subsection{Setup}
