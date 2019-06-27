@@ -115,7 +115,7 @@ But MAPO suffers from three main disadvantages:
 
 \noindent\textbf{Length Bias} is the phonomenon of a policy to favor a shorter trajectory as compared to a longer one with equal or even greater rewards. This makes it hard to train the policy for longer and more complex queries.
 
-\noindent\textbf{Data Bias} is an intrinsic property of the knowledge base on the data it contains. It refers to the situation when multiple APIs retrieve the same set of results from the KB for some inputs and behave very differently for a differnt set of inputs. This confuses the policy which is not able to learn the proper behavior of the API.
+\noindent\textbf{Data Bias} is an intrinsic property of the knowledge base on the data it contains. It refers to the situation when multiple APIs retrieve the same set of results from the KB for some inputs and behave very differently for a different set of inputs. This confuses the policy which is not able to learn the proper behavior of the API.
 
 \noindent\textbf{Language Bias} is the due to the frequennt occurance of some inputs to the API which biases the policy to predict them. For example, {\em dontcare}, or null, is seen very often in the dataset as it is the default input. The policy would favor prediciting such null inputs even if they result to a low reward.
 
